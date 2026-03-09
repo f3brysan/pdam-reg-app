@@ -118,6 +118,12 @@
                             {{ session('error') }}
                         </div>
                     @endif
+                    @if (session('success'))
+                        <div class="alert alert-success alert-dismissible" role="alert">
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            {{ session('success') }}
+                        </div>
+                    @endif
                     <h4 class="mb-2 fw-semibold">Welcome to PDAM! 👋</h4>
                     <p class="mb-4">Please sign-in to your account and start the adventure</p>
 
