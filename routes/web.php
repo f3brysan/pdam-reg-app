@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -13,3 +14,7 @@ route::post('/login', [AuthController::class, 'authenticate'])->name('authentica
 route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 route::get('/register', [AuthController::class, 'register'])->name('register');
 route::post('/register', [AuthController::class, 'registerStore'])->name('register.store');
+
+route::group(['middleware' => 'auth'], function () {
+    route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+});
