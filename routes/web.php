@@ -2,6 +2,9 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\MsJenisMeteranController;
+use App\Http\Controllers\MsJenisTempatTinggalController;
+use App\Http\Controllers\MsPekerjaanController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -17,4 +20,12 @@ route::post('/register', [AuthController::class, 'registerStore'])->name('regist
 
 route::group(['middleware' => 'auth'], function () {
     route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    route::group(['middleware' => ['role:admin']], function () {
+        route::get('/master/pekerjaan', [MsPekerjaanController::class, 'index'])->name('ms_pekerjaans.index');
+
+        route::get('/master/jenis-meteran', [MsJenisMeteranController::class, 'index'])->name('ms_jenis_meterans.index');
+        
+        route::get('/master/jenis-tempat-tinggal', [MsJenisTempatTinggalController::class, 'index'])->name('ms_jenis_tempat_tinggals.index');
+    });    
 });

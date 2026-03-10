@@ -1,13 +1,41 @@
- <aside id="layout-menu" class="layout-menu-horizontal menu-horizontal menu bg-menu-theme flex-grow-0">
-              <div class="container-xxl d-flex h-100">
-                <ul class="menu-inner">
-                  <!-- Dashboards -->
-                 <li class="menu-item {{ request()->is('dashboard') ? 'active' : '' }}">
-                        <a href="{{ route('dashboard') }}" class="menu-link">
-                          <i class="menu-icon tf-icons mdi mdi-home-outline"></i>
-                          <div data-i18n="Dashboard">Dashboard</div>
-                        </a>
-                      </li>                
-                </ul>
-              </div>
-            </aside>
+<aside id="layout-menu" class="layout-menu-horizontal menu-horizontal menu bg-menu-theme flex-grow-0">
+  <div class="container-xxl d-flex h-100">
+    <ul class="menu-inner">
+      <!-- Dashboards -->
+      <li class="menu-item {{ request()->is('dashboard') ? 'active' : '' }}">
+        <a href="{{ route('dashboard') }}" class="menu-link">
+          <i class="menu-icon tf-icons mdi mdi-home-outline"></i>
+          <div data-i18n="Dashboard">Dashboard</div>
+        </a>
+      </li>
+      @role('admin')
+      <li class="menu-item menu-dropdown">
+        <a href="javascript:void(0);" class="menu-link menu-toggle">
+          <i class="menu-icon tf-icons mdi mdi-database-outline"></i>
+          <div data-i18n="Master">Master</div>
+        </a>
+        <ul class="menu-sub">
+          <li class="menu-item {{ request()->is('master/pekerjaan*') ? 'active' : '' }}">
+            <a href="{{ route('ms_pekerjaans.index') }}" class="menu-link">
+              <i class="menu-icon tf-icons mdi mdi-briefcase-outline"></i>
+              <div data-i18n="Master Pekerjaan">Master Pekerjaan</div>
+            </a>
+          </li>
+          <li class="menu-item {{ request()->is('master/jenis-meteran*') ? 'active' : '' }}">
+            <a href="{{ route('ms_jenis_meterans.index') }}" class="menu-link">
+              <i class="menu-icon tf-icons mdi mdi-gauge"></i>
+              <div data-i18n="Master Jenis Meteran">Master Jenis Meteran</div>
+            </a>
+          </li>
+          <li class="menu-item {{ request()->is('master/jenis-tempat-tinggal*') ? 'active' : '' }}">
+            <a href="{{ route('ms_jenis_tempat_tinggals.index') }}" class="menu-link">
+              <i class="menu-icon tf-icons mdi mdi-home-city-outline"></i>
+              <div data-i18n="Master Jenis Tempat Tinggal">Master Jenis Tempat Tinggal</div>
+            </a>
+          </li>
+        </ul>
+      </li>
+      @endrole
+    </ul>
+  </div>
+</aside>
