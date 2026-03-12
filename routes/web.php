@@ -30,5 +30,8 @@ route::group(['middleware' => 'auth'], function () {
         route::get('/master/jenis-meteran', [MsJenisMeteranController::class, 'index'])->name('ms_jenis_meterans.index');
         
         route::get('/master/jenis-tempat-tinggal', [MsJenisTempatTinggalController::class, 'index'])->name('ms_jenis_tempat_tinggals.index');
+        route::post('/master/jenis-tempat-tinggal', [MsJenisTempatTinggalController::class, 'store'])->name('ms_jenis_tempat_tinggals.store');
+        route::get('/master/jenis-tempat-tinggal/{id}', [MsJenisTempatTinggalController::class, 'show'])->name('ms_jenis_tempat_tinggals.show');
+        route::post('/master/jenis-tempat-tinggal/delete', [MsJenisTempatTinggalController::class, 'destroy'])->name('ms_jenis_tempat_tinggals.delete');
     });    
 });
