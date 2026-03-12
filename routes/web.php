@@ -23,6 +23,9 @@ route::group(['middleware' => 'auth'], function () {
 
     route::group(['middleware' => ['role:admin']], function () {
         route::get('/master/pekerjaan', [MsPekerjaanController::class, 'index'])->name('ms_pekerjaans.index');
+        route::post('/master/pekerjaan', [MsPekerjaanController::class, 'store'])->name('ms_pekerjaans.store');
+        route::get('/master/pekerjaan/{id}', [MsPekerjaanController::class, 'show'])->name('ms_pekerjaans.show');
+        route::post('/master/pekerjaan/delete', [MsPekerjaanController::class, 'destroy'])->name('ms_pekerjaans.delete');
 
         route::get('/master/jenis-meteran', [MsJenisMeteranController::class, 'index'])->name('ms_jenis_meterans.index');
         
