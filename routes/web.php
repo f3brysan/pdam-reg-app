@@ -28,6 +28,10 @@ route::group(['middleware' => 'auth'], function () {
         route::post('/master/pekerjaan/delete', [MsPekerjaanController::class, 'destroy'])->name('ms_pekerjaans.delete');
 
         route::get('/master/jenis-meteran', [MsJenisMeteranController::class, 'index'])->name('ms_jenis_meterans.index');
+        route::post('/master/jenis-meteran', [MsJenisMeteranController::class, 'store'])->name('ms_jenis_meterans.store');
+        route::get('/master/jenis-meteran/{id}', [MsJenisMeteranController::class, 'show'])->name('ms_jenis_meterans.show');
+        route::post('/master/jenis-meteran/delete', [MsJenisMeteranController::class, 'destroy'])->name('ms_jenis_meterans.delete');
+
         
         route::get('/master/jenis-tempat-tinggal', [MsJenisTempatTinggalController::class, 'index'])->name('ms_jenis_tempat_tinggals.index');
         route::post('/master/jenis-tempat-tinggal', [MsJenisTempatTinggalController::class, 'store'])->name('ms_jenis_tempat_tinggals.store');
