@@ -53,7 +53,8 @@
                 columns: [
                     {
                         data: 'DT_RowIndex',
-                        name: 'DT_RowIndex'
+                        name: 'DT_RowIndex',
+                        className: 'text-end',
                     },
                     {
                         data: 'name',
@@ -65,7 +66,8 @@
                     },
                     {
                         data: 'role',
-                        name: 'role'
+                        name: 'role',
+                        className: 'text-center',
                     },
                     {
                         data: 'action',
