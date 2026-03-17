@@ -6,6 +6,7 @@ use App\Http\Controllers\MsJenisMeteranController;
 use App\Http\Controllers\MsJenisTempatTinggalController;
 use App\Http\Controllers\MsPekerjaanController;
 use App\Http\Controllers\UserController;
+use App\Models\PermohonanController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -21,6 +22,14 @@ route::post('/register', [AuthController::class, 'registerStore'])->name('regist
 
 route::group(['middleware' => 'auth'], function () {
     route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    route::prefix('permohonan')->group(function () {
+        route::get('/', [PermohonanController::class, 'index'])->name('permohonan.index');
+        route::get('/create', [PermohonanController::class, 'create'])->name('permohonan.create');
+        route::post('/store', [PermohonanController::class, 'store'])->name('permohonan.store');
+        route::get('/{id}', [PermohonanController::class, 'show'])->name('permohonan.show');
+        route::post('/{id}/delete', [PermohonanController::class, 'destroy'])->name('permohonan.delete');
+    });
 
     route::group(['middleware' => ['role:admin']], function () {
         // * Master (prefix)

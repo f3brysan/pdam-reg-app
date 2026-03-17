@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\PermohonanTransaction;
 use App\Models\User;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
@@ -38,6 +37,7 @@ class DashboardController extends Controller
 
     public function userIndex()
     {
-        return view('dashboard.user.index');
+        $permohonanTransactions = PermohonanTransaction::where('id', Auth::user()->id)->first();                
+        return view('dashboard.user.index', compact('permohonanTransactions'));
     }
 }
