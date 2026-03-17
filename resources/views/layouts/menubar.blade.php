@@ -9,7 +9,7 @@
         </a>
       </li>
       @role('admin')
-      <li class="menu-item menu-dropdown">
+      <li class="menu-item menu-dropdown {{ request()->is('master*') ? 'active' : '' }}">
         <a href="javascript:void(0);" class="menu-link menu-toggle">
           <i class="menu-icon tf-icons mdi mdi-database-outline"></i>
           <div data-i18n="Master">Master</div>
@@ -34,6 +34,12 @@
             </a>
           </li>
         </ul>
+      </li>
+      <li class="menu-item {{ request()->is('user*') ? 'active' : '' }}">
+        <a href="{{ route('users.index') }}" class="menu-link">
+          <i class="menu-icon tf-icons mdi mdi-account-outline"></i>
+          <div data-i18n="User">User</div>
+        </a>
       </li>
       @endrole
     </ul>
