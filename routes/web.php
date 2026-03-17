@@ -5,6 +5,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MsJenisMeteranController;
 use App\Http\Controllers\MsJenisTempatTinggalController;
 use App\Http\Controllers\MsPekerjaanController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -41,6 +42,14 @@ route::group(['middleware' => 'auth'], function () {
             route::post('/jenis-tempat-tinggal', [MsJenisTempatTinggalController::class, 'store'])->name('ms_jenis_tempat_tinggals.store');
             route::get('/jenis-tempat-tinggal/{id}', [MsJenisTempatTinggalController::class, 'show'])->name('ms_jenis_tempat_tinggals.show');
             route::post('/jenis-tempat-tinggal/delete', [MsJenisTempatTinggalController::class, 'destroy'])->name('ms_jenis_tempat_tinggals.delete');
+        });
+
+        // * User (prefix)
+        Route::prefix('user')->group(function () {
+            route::get('/', [UserController::class, 'index'])->name('users.index');
+            route::post('/', [UserController::class, 'store'])->name('users.store');
+            route::get('/{id}', [UserController::class, 'show'])->name('users.show');
+            route::post('/{id}/delete', [UserController::class, 'destroy'])->name('users.delete');
         });
     });
 });
