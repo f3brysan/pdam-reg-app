@@ -2,11 +2,12 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\MsJenisDokumenController;
 use App\Http\Controllers\MsJenisMeteranController;
 use App\Http\Controllers\MsJenisTempatTinggalController;
 use App\Http\Controllers\MsPekerjaanController;
+use App\Http\Controllers\PermohonanController;
 use App\Http\Controllers\UserController;
-use App\Models\PermohonanController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -51,6 +52,12 @@ route::group(['middleware' => 'auth'], function () {
             route::post('/jenis-tempat-tinggal', [MsJenisTempatTinggalController::class, 'store'])->name('ms_jenis_tempat_tinggals.store');
             route::get('/jenis-tempat-tinggal/{id}', [MsJenisTempatTinggalController::class, 'show'])->name('ms_jenis_tempat_tinggals.show');
             route::post('/jenis-tempat-tinggal/delete', [MsJenisTempatTinggalController::class, 'destroy'])->name('ms_jenis_tempat_tinggals.delete');
+
+            // * Master Jenis Dokumen
+            route::get('/jenis-dokumen', [MsJenisDokumenController::class, 'index'])->name('ms_jenis_dokumens.index');
+            route::post('/jenis-dokumen', [MsJenisDokumenController::class, 'store'])->name('ms_jenis_dokumens.store');
+            route::get('/jenis-dokumen/{id}', [MsJenisDokumenController::class, 'show'])->name('ms_jenis_dokumens.show');
+            route::post('/jenis-dokumen/delete', [MsJenisDokumenController::class, 'destroy'])->name('ms_jenis_dokumens.delete');
         });
 
         // * User (prefix)

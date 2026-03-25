@@ -33,6 +33,12 @@
               <div data-i18n="Master Jenis Tempat Tinggal">Master Jenis Tempat Tinggal</div>
             </a>
           </li>
+          <li class="menu-item {{ request()->is('master/jenis-dokumen*') ? 'active' : '' }}">
+            <a href="{{ route('ms_jenis_dokumens.index') }}" class="menu-link">
+              <i class="menu-icon tf-icons mdi mdi-file-outline"></i>
+              <div data-i18n="Master Jenis Dokumen">Master Jenis Dokumen</div>
+            </a>
+          </li>
         </ul>
       </li>
       <li class="menu-item {{ request()->is('user*') ? 'active' : '' }}">
