@@ -309,6 +309,7 @@
         $('#permohonan-form').submit(function(e) {
             e.preventDefault();
             const formData = new FormData(this);
+            $('#permohonan-form button[type="submit"]').prop('disabled', true).text('Menyimpan...');
             $.ajax({
                 url: "{{ route('permohonan.store') }}",
                 type: "POST",
@@ -322,10 +323,13 @@
                 success: function(response) {
                     console.log(response);
                     toastr.success(response.message);
+                    $('#permohonan-form button[type="submit"]').prop('disabled', false).text('Kirim Permohonan');
+                    location.href = "{{ route('dashboard') }}";
                 },
                 error: function(xhr, status, error) {
                     console.error(xhr.responseJSON.message);
                     toastr.error(xhr.responseJSON.message);
+                    $('#permohonan-form button[type="submit"]').prop('disabled', false).text('Kirim Permohonan');
                 }
             })
         })
