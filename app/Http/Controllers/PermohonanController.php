@@ -91,7 +91,9 @@ class PermohonanController extends Controller
 
             DB::beginTransaction();
 
+            $userId = auth()->user()->id;
             $insertData = [
+                'id' => $userId,
                 'no_register' => $noRegister,
                 'nama' => $request->nama,
                 'nik' => $request->nik,
@@ -120,7 +122,7 @@ class PermohonanController extends Controller
                 }
 
                 $permohonanDokumenTransaction = PermohonanDokumenTransaction::create([
-                    'permohonan_transaction_id' => $permohonanTransaction->id,
+                    'permohonan_transaction_id' => $userId,
                     'ms_jenis_dokumen_id' => $item->id,
                     'path' => $path,
                     'size' => $size,
