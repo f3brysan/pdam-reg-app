@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\MsJenisDokumen;
 use App\Models\MsJenisTempatTinggal;
 use App\Models\MsPekerjaan;
+use App\Models\PermohonanDokumenTransaction;
 use App\Models\PermohonanTransaction;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class PermohonanController extends Controller
@@ -19,13 +22,14 @@ class PermohonanController extends Controller
     {
         $msJenisTempatTinggal = MsJenisTempatTinggal::all();
         $msPekerjaan = MsPekerjaan::all();
-        return view('permohonan.user.create', compact('msJenisTempatTinggal', 'msPekerjaan'));
+        $msJenisDokumen = MsJenisDokumen::all();
+        return view('permohonan.user.create', compact('msJenisTempatTinggal', 'msPekerjaan', 'msJenisDokumen'));
     }
 
     public function store(Request $request)
     {
         try {
-            
+
             $validate = Validator::make($request->all(), [
                 'nama' => 'required',
                 'nik' => 'required',
@@ -40,17 +44,26 @@ class PermohonanController extends Controller
                 'kelurahan' => 'required',
                 'latitude' => 'required',
                 'longitude' => 'required',
-                'ktp' => 'required|file|mimes:pdf,jpg,jpeg,png',
-                'pengantar' => 'required|file|mimes:pdf,jpg,jpeg,png',
-                'dokumen_lainnya' => 'required|file|mimes:pdf,jpg,jpeg,png',
             ]);
+
+            $msJenisDokumen = MsJenisDokumen::all();
+
+            foreach ($msJenisDokumen as $item) {
+                $slug = $item->slug;
+                if (! $request->hasFile($slug)) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Anda harus mengupload dokumen '.$item->nama,
+                    ], 422);
+                }
+            }
 
             if (empty($request->konfirmasi)) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Anda harus menyetujui persyaratan konfirmasi',
                     'error_type' => 'validation_error',
-                    'field' => 'konfirmasi',                    
+                    'field' => 'konfirmasi',
                 ], 422);
             }
 
@@ -68,61 +81,61 @@ class PermohonanController extends Controller
                 ], 422);
             }
 
-           
-        // Save uploaded files to public directory
-        $ktpPath = null;
-        $pengantarPath = null;
-        $dokumenLainnyaPath = null;
+            $checkSquence = PermohonanTransaction::where('no_register', 'like', date('Ymd').'%')->orderBy('no_register', 'desc')->first();
 
-        if ($request->hasFile('ktp')) {
-            $ktp = $request->file('ktp');
-            $ktpPath = $ktp->store('uploads/ktp', 'public');
-        }
+            if ($checkSquence) {
+                $noRegister = $checkSquence->no_register + 1;
+            } else {
+                $noRegister = date('Ymd').'0001';
+            }
 
-        if ($request->hasFile('pengantar')) {
-            $pengantar = $request->file('pengantar');
-            $pengantarPath = $pengantar->store('uploads/pengantar', 'public');
-        }
+            DB::beginTransaction();
 
-        if ($request->hasFile('dokumen_lainnya')) {
-            $dokumenLainnya = $request->file('dokumen_lainnya');
-            $dokumenLainnyaPath = $dokumenLainnya->store('uploads/dokumen_lainnya', 'public');
-        }
+            $insertData = [
+                'no_register' => $noRegister,
+                'nama' => $request->nama,
+                'nik' => $request->nik,
+                'alamat' => $request->alamat,
+                'telepon' => $request->telepon,
+                'jenis_tempat_tinggal' => $request->jenis_tempat_tinggal,
+                'pekerjaan' => $request->pekerjaan,
+                'jumlah_kran' => $request->jumlah_kran,
+                'tgl_daftar' => $request->tgl_daftar,
+                'nomor_rumah' => $request->nomor_rumah,
+                'kecamatan' => $request->kecamatan,
+                'kelurahan' => $request->kelurahan,
+                'latitude' => $request->latitude,
+                'longitude' => $request->longitude,
+                'status' => 'DIAJUKAN',
+            ];
 
-        $checkSquence = PermohonanTransaction::where('no_register', 'like', date('Ymd').'%')->orderBy('no_register', 'desc')->first();
+            $permohonanTransaction = PermohonanTransaction::create($insertData);
 
-        if ($checkSquence) {
-            $noRegister = $checkSquence->no_register + 1;
-        } else {
-            $noRegister = date('Ymd').'0001';
-        }        
-        
-        $insertData = [
-            'no_register' => $noRegister,
-            'nama' => $request->nama,
-            'nik' => $request->nik,
-            'alamat' => $request->alamat,
-            'telepon' => $request->telepon,
-            'jenis_tempat_tinggal' => $request->jenis_tempat_tinggal,
-            'pekerjaan' => $request->pekerjaan,
-            'jumlah_kran' => $request->jumlah_kran,
-            'tgl_daftar' => $request->tgl_daftar,
-            'nomor_rumah' => $request->nomor_rumah,
-            'kecamatan' => $request->kecamatan,
-            'kelurahan' => $request->kelurahan,
-            'latitude' => $request->latitude,
-            'longitude' => $request->longitude,            
-            'status' => 'DIAJUKAN',
-        ];
+            foreach ($msJenisDokumen as $item) {
 
-        $permohonanTransaction = PermohonanTransaction::create($insertData);
+                if ($request->hasFile($item->slug)) {
+                    $file = $request->file($item->slug);
+                    $path = $file->store('uploads/'.$item->slug, 'public');
+                    $size = $file->getSize();
+                }
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Permohonan berhasil diajukan',
-            'data' => $permohonanTransaction
-        ], 200);
+                $permohonanDokumenTransaction = PermohonanDokumenTransaction::create([
+                    'permohonan_transaction_id' => $permohonanTransaction->id,
+                    'ms_jenis_dokumen_id' => $item->id,
+                    'path' => $path,
+                    'size' => $size,
+                ]);
+            }
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Permohonan berhasil diajukan',
+                'data' => $permohonanTransaction
+            ], 200);
         } catch (\Throwable $th) {
+            DB::rollBack();
             return response()->json([
                 'success' => false,
                 'message' => $th->getMessage()

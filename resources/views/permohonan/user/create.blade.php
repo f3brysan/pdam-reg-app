@@ -49,35 +49,38 @@
                 </ul>
             </div>
             <div class="card-body">
-                <div class="tab-content" id="permohonanTabContent">
-                    <div class="tab-pane fade show active" id="persyaratan" role="tabpanel"
-                        aria-labelledby="persyaratan-tab">
-                        <!-- Persyaratan Content -->
-                        <h5>Persyaratan Permohonan</h5>
-                        <ul>
-                            <li>Salinan KTP Pemohon</li>
-                            <li>Surat Keterangan Domisili (jika diperlukan)</li>
-                            <li>Surat Pernyataan / Pengantar RT/RW</li>
-                            <li>Formulir Permohonan</li>
-                            <li>Dokumen pendukung lainnya</li>
-                        </ul>
-                        <div class="mt-3">
-                            <button class="btn btn-primary" type="button"
-                                onclick="nextTab('data-pemohon-tab')">Lanjut</button>
+                <form id="permohonan-form" enctype="multipart/form-data">
+                    <div class="tab-content" id="permohonanTabContent">
+                        @csrf
+                        <div class="tab-pane fade show active" id="persyaratan" role="tabpanel"
+                            aria-labelledby="persyaratan-tab">
+                            <!-- Persyaratan Content -->
+                            <h5>Persyaratan Permohonan</h5>
+                            <ul>
+                                <li>Salinan KTP Pemohon</li>
+                                <li>Surat Keterangan Domisili (jika diperlukan)</li>
+                                <li>Surat Pernyataan / Pengantar RT/RW</li>
+                                <li>Formulir Permohonan</li>
+                                <li>Dokumen pendukung lainnya</li>
+                            </ul>
+                            <div class="mt-3">
+                                <button class="btn btn-primary" type="button"
+                                    onclick="nextTab('data-pemohon-tab')">Lanjut</button>
+                            </div>
                         </div>
-                    </div>
-                    <div class="tab-pane fade" id="data-pemohon" role="tabpanel" aria-labelledby="data-pemohon-tab">
-                        <!-- Data Pemohon Content -->
-                        <h5>Data Pemohon</h5>
-                        <form id="data-pemohon-form">
-                            @csrf
+                        <div class="tab-pane fade" id="data-pemohon" role="tabpanel" aria-labelledby="data-pemohon-tab">
+                            <!-- Data Pemohon Content -->
+                            <h5>Data Pemohon</h5>
                             <div class="mb-3">
                                 <label for="nama" class="form-label">Nama Lengkap</label>
-                                <input type="text" class="form-control" id="nama" name="nama" value="{{ auth()->user()->name }}" readonly>
+                                <input type="text" class="form-control" id="nama" name="nama"
+                                    value="{{ auth()->user()->name }}" readonly>
                             </div>
                             <div class="mb-3">
                                 <label for="nik" class="form-label">NIK</label>
-                                <input type="text" class="form-control" id="nik" name="nik" maxlength="16" pattern="\d{1,16}" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0,16);">
+                                <input type="text" class="form-control" id="nik" name="nik" maxlength="16"
+                                    pattern="\d{1,16}"
+                                    oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0,16);">
                             </div>
                             <div class="mb-3">
                                 <label for="alamat" class="form-label">Alamat</label>
@@ -109,90 +112,89 @@
                                 <label class="form-label">Banyak Kran</label>
                                 <div id="pipes-container">
                                     <div class="input-group mb-2 pipe-row">
-                                        <input type="text" class="form-control" name="jumlah_kran" placeholder="Masukkan jumlah kran" min="1" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                                        <input type="text" class="form-control" name="jumlah_kran"
+                                            placeholder="Masukkan jumlah kran" min="1"
+                                            oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                                     </div>
                                 </div>
-                            </div>                            
+                            </div>
                             <div class="d-flex justify-content-end align-items-center mt-3">
                                 <button class="btn btn-secondary me-2" type="button"
                                     onclick="prevTab('persyaratan-tab')">Sebelumnya</button>
                                 <button class="btn btn-primary" type="button"
-                                    onclick="nextTab('lokasi-tab', 'submit-data-pemohon-form')">Lanjut</button>
+                                    onclick="nextTab('lokasi-tab')">Lanjut</button>
                             </div>
-                        </form>
-                    </div>
-                    <div class="tab-pane fade" id="lokasi" role="tabpanel" aria-labelledby="lokasi-tab">
-                        <!-- Lokasi Pemasangan Content -->
-                        <h5>Lokasi Pemasangan</h5>
-                        <form>
-                            <div class="mb-3">
-                                <label for="tgl_daftar" class="form-label">Tanggal Daftar</label>
-                                <input type="date" class="form-control" id="tgl_daftar" name="tgl_daftar" value="{{ date('Y-m-d') }}" readonly>
-                            </div>
-                            <div class="mb-3">
-                                <label for="nomor_rumah" class="form-label">Nomor Rumah</label>
-                                <input type="text" class="form-control" id="nomor_rumah" name="nomor_rumah">
-                            </div>
-                            <div class="mb-3">
-                                <label for="kecamatan" class="form-label">Kecamatan</label>
-                                <input type="text" class="form-control" id="kecamatan" name="kecamatan">
-                            </div>
-                            <div class="mb-3">
-                                <label for="kelurahan" class="form-label">Kelurahan</label>
-                                <input type="text" class="form-control" id="kelurahan" name="kelurahan">
-                            </div>
-                            <div class="mb-3">
-                                <label for="latitude" class="form-label">Latitude</label>
-                                <input type="text" name="latitude" id="latitude" readonly class="form-control"
-                                    value="{{ old('latitude', $data->latitude ?? '') }}">
-                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="lokasi" role="tabpanel" aria-labelledby="lokasi-tab">
+                            <!-- Lokasi Pemasangan Content -->
+                            <h5>Lokasi Pemasangan</h5>
+                                <div class="mb-3">
+                                    <label for="tgl_daftar" class="form-label">Tanggal Daftar</label>
+                                    <input type="date" class="form-control" id="tgl_daftar" name="tgl_daftar"
+                                        value="{{ date('Y-m-d') }}" readonly>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="nomor_rumah" class="form-label">Nomor Rumah</label>
+                                    <input type="text" class="form-control" id="nomor_rumah" name="nomor_rumah">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="kecamatan" class="form-label">Kecamatan</label>
+                                    <input type="text" class="form-control" id="kecamatan" name="kecamatan">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="kelurahan" class="form-label">Kelurahan</label>
+                                    <input type="text" class="form-control" id="kelurahan" name="kelurahan">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="latitude" class="form-label">Latitude</label>
+                                    <input type="text" name="latitude" id="latitude" readonly class="form-control"
+                                        value="{{ old('latitude', $data->latitude ?? '') }}">
+                                </div>
 
-                            <div class="mb-3">
-                                <label for="longitude" class="form-label">Longitude</label>
-                                <input type="text" name="longitude" id="longitude" readonly class="form-control"
-                                    value="{{ old('longitude', $data->longitude ?? '') }}">
-                            </div>
+                                <div class="mb-3">
+                                    <label for="longitude" class="form-label">Longitude</label>
+                                    <input type="text" name="longitude" id="longitude" readonly class="form-control"
+                                        value="{{ old('longitude', $data->longitude ?? '') }}">
+                                </div>
 
+                                <div class="mb-3">
+                                    <label class="form-label">Pilih Lokasi</label>
+                                    <div id="map" style="height: 400px; border-radius: 8px;"></div>
+                                </div>
+                                <button class="btn btn-secondary" type="button"
+                                    onclick="prevTab('data-pemohon-tab')">Sebelumnya</button>
+                                <button class="btn btn-primary" type="button"
+                                    onclick="nextTab('dokumen-tab')">Lanjut</button>
+                        </div>
+                        <div class="tab-pane fade" id="dokumen" role="tabpanel" aria-labelledby="dokumen-tab">
+                            <!-- Kebutuhan Dokumen Content -->
+                            <h5>Kebutuhan Dokumen</h5>
+                            @foreach ($msJenisDokumen as $item)
+                                <div class="mb-3">
+                                    <label for="{{ $item->slug }}" class="form-label">{{ $item->nama }}</label>
+                                    <input type="file" class="form-control" id="{{ $item->slug }}" name="{{ $item->slug }}">
+                                </div>
+                            @endforeach
+                                <button class="btn btn-secondary" type="button"
+                                    onclick="prevTab('lokasi-tab')">Sebelumnya</button>
+                                <button class="btn btn-primary" type="button"
+                                    onclick="nextTab('konfirmasi-tab')">Lanjut</button>
+                        </div>
+                        <div class="tab-pane fade" id="konfirmasi" role="tabpanel" aria-labelledby="konfirmasi-tab">
+                            <!-- Konfirmasi Content -->
+                            <h5>Konfirmasi Permohonan</h5>
+                            <p>Bersedia membayar biaya Sambungan / Rekening Air Minum di Kantor PERUMDAM LAWU TIRTA Kab. Magetan.</p>
                             <div class="mb-3">
-                                <label class="form-label">Pilih Lokasi</label>
-                                <div id="map" style="height: 400px; border-radius: 8px;"></div>
+                                <label for="konfirmasi" class="form-label">Ya, saya bersedia</label>
+                                <input type="checkbox" class="form-check-input" id="konfirmasi" name="konfirmasi">
                             </div>
+                            <!-- Ringkasan data dapat ditambahkan di sini -->
                             <button class="btn btn-secondary" type="button"
-                                onclick="prevTab('data-pemohon-tab')">Sebelumnya</button>
-                            <button class="btn btn-primary" type="button" onclick="nextTab('dokumen-tab')">Lanjut</button>
-                        </form>
+                                onclick="prevTab('dokumen-tab')">Sebelumnya</button>
+                            <button class="btn btn-success" type="submit">Kirim Permohonan</button>
+                        </div>
                     </div>
-                    <div class="tab-pane fade" id="dokumen" role="tabpanel" aria-labelledby="dokumen-tab">
-                        <!-- Kebutuhan Dokumen Content -->
-                        <h5>Kebutuhan Dokumen</h5>
-                        <form>
-                            <div class="mb-3">
-                                <label for="ktp" class="form-label">Upload KTP</label>
-                                <input type="file" class="form-control" id="ktp" name="ktp">
-                            </div>
-                            <div class="mb-3">
-                                <label for="pengantar" class="form-label">Upload Surat Pengantar</label>
-                                <input type="file" class="form-control" id="pengantar" name="pengantar">
-                            </div>
-                            <div class="mb-3">
-                                <label for="dokumen-lainnya" class="form-label">Dokumen Lainnya</label>
-                                <input type="file" class="form-control" id="dokumen-lainnya" name="dokumen-lainnya">
-                            </div>
-                            <button class="btn btn-secondary" type="button"
-                                onclick="prevTab('lokasi-tab')">Sebelumnya</button>
-                            <button class="btn btn-primary" type="button"
-                                onclick="nextTab('konfirmasi-tab')">Lanjut</button>
-                        </form>
-                    </div>
-                    <div class="tab-pane fade" id="konfirmasi" role="tabpanel" aria-labelledby="konfirmasi-tab">
-                        <!-- Konfirmasi Content -->
-                        <h5>Konfirmasi Permohonan</h5>
-                        <p>Pastikan semua data sudah benar sebelum mengirim permohonan.</p>
-                        <!-- Ringkasan data dapat ditambahkan di sini -->
-                        <button class="btn btn-secondary" type="button" onclick="prevTab('dokumen-tab')">Sebelumnya</button>
-                        <button class="btn btn-success" type="submit">Kirim Permohonan</button>
-                    </div>
-                </div>
+                </form>
             </div>
         </div>
     </div>
@@ -295,48 +297,37 @@
 
     <script>
         function nextTab(tabId, submitFormId) {
-            switch (submitFormId) {
-                case 'submit-data-pemohon-form':
-                    submitForm('data-pemohon-form');
-                    break;
-                default:
-                    break;
-            }
-
             var el = document.getElementById(tabId);
             if (el) el.click();
-
-
-
         }
+
         function prevTab(tabId, submitFormId) {
             var el = document.getElementById(tabId);
             if (el) el.click();
         }
 
-        function submitForm(formId) {
-            const form = document.getElementById(formId);
-            if (!form) {
-                console.error('Form not found:', formId);
-                return null;
-            }
-            const formData = new FormData(form);
-
+        $('#permohonan-form').submit(function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
             $.ajax({
                 url: "{{ route('permohonan.store') }}",
                 type: "POST",
                 data: formData,
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                },
+                dataType: 'json',
                 processData: false,
                 contentType: false,
-                dataType: 'json',
-                success: function (response) {
+                success: function(response) {
                     console.log(response);
+                    toastr.success(response.message);
                 },
-                error: function (xhr, status, error) {
-                    console.error('Error:', error);
+                error: function(xhr, status, error) {
+                    console.error(xhr.responseJSON.message);
                     toastr.error(xhr.responseJSON.message);
                 }
             })
-        }
+        })
     </script>
 @endpush
