@@ -92,7 +92,7 @@
                             </div>
                             <div class="mb-3">
                                 <label for="jenis-tempat-tinggal" class="form-label">Jenis Tempat Tinggal</label>
-                                <select class="form-select" id="jenis-tempat-tinggal" name="jenis-tempat-tinggal">
+                                <select class="form-select" id="jenis-tempat-tinggal" name="jenis_tempat_tinggal">
                                     <option value="">Pilih</option>
                                     @foreach ($msJenisTempatTinggal as $item)
                                         <option value="{{ $item->id }}">{{ $item->nama }}</option>
