@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\MsJenisDokumen;
 use App\Models\PermohonanTransaction;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
@@ -37,9 +39,13 @@ class DashboardController extends Controller
 
     public function userIndex()
     {
-        $permohonanTransactions = PermohonanTransaction::where('id', Auth::user()->id)->with('permohonanDokumenTransactions')->first(); 
-
+        $permohonanTransactions = PermohonanTransaction::where('id', Auth::user()->id)->first(); 
         
-        return view('dashboard.user.index', compact('permohonanTransactions'));
+        $dokumenPendukung = DB::table('ms_jenis_dokumens')   
+            ->leftJoin('permohonan_dokumen_transactions', 'ms_jenis_dokumens.id', '=', 'permohonan_dokumen_transactions.ms_jenis_dokumen_id')
+            ->where('permohonan_dokumen_transactions.permohonan_transaction_id', $permohonanTransactions->id)
+            ->get();
+        
+        return view('dashboard.user.index', compact('permohonanTransactions', 'dokumenPendukung'));
     }
 }

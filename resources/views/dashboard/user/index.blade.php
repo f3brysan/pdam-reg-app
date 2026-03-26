@@ -20,7 +20,7 @@
                                             @if(isset($permohonanTransactions) && ($permohonanTransactions->status == 'DIVERIFIKASI' || $permohonanTransactions->status == 'DISETUJUI' || $permohonanTransactions->status == 'SELESAI' || $permohonanTransactions->status == 'DIBAYAR' || $permohonanTransactions->status == 'PEMASANGAN'))
                                                 <i class="mdi mdi-check-circle text-success fs-2"></i>
                                             @else
-                                                <i class="mdi mdi-close-circle text-danger fs-2"></i>
+                                                <i class="mdi mdi-timer-sand text-warning fs-2"></i>
                                             @endif
                                         </div>
                                     </div>
@@ -72,40 +72,42 @@
                                         </li>
                                         <li class="list-group-item d-flex justify-content-between align-items-center">
                                             <span><i class="mdi mdi-file-outline me-2"></i>Jenis Permohonan</span>
-                                            <span>Pemasangan Baru</span>
+                                            <span>Sambungan Baru</span>
                                         </li>
                                         <li class="list-group-item d-flex justify-content-between align-items-center">
                                             <span><i class="mdi mdi-clock-outline me-2"></i>Status Pembayaran</span>
                                             <span class="badge bg-warning text-dark">Belum Lunas</span>
                                         </li>
-                                    </ul>                                    
-                                </div>
-                            <div class="row">
-                                <div class="col-12">
-                                    <h6 class="fw-semibold my-3">Dokumen yang Diupload</h6>
-                                    <ul class="list-group list-group-flush">
-                                        @if(isset($permohonanTransactions) && $permohonanTransactions->permohonanDokumenTransactions && $permohonanTransactions->permohonanDokumenTransactions->count() > 0)
-                                            @foreach($permohonanTransactions->permohonanDokumenTransactions as $dokumen)
-                                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                                    <span>
-                                                        <i class="mdi mdi-file-check-outline me-2"></i>
-                                                        {{ $dokumen->msJenisDokumen->nama ?? 'Dokumen' }}
-                                                    </span>
-                                                    @if(!empty($dokumen->path))
-                                                        <a href="{{ asset('storage/' . $dokumen->path) }}" target="_blank" class="btn btn-sm btn-outline-success">
-                                                            <i class="mdi mdi-eye"></i> Lihat
-                                                        </a>
-                                                    @else
-                                                        <span class="badge bg-secondary">Belum Upload</span>
-                                                    @endif
-                                                </li>
-                                            @endforeach
-                                        @else
-                                            <li class="list-group-item">Tidak ada dokumen diupload.</li>
-                                        @endif
                                     </ul>
                                 </div>
-                            </div>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <h6 class="fw-semibold my-3">Dokumen yang Diupload</h6>
+                                        <ul class="list-group list-group-flush">
+                                            @if(isset($dokumenPendukung) && $dokumenPendukung->count() > 0)
+                                                @foreach($dokumenPendukung as $dokumen)
+                                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                        <span>
+                                                            <i class="mdi mdi-file-check-outline me-2"></i>
+                                                            {{ $dokumen->nama }}
+                                                        </span>
+                                                        @if(! empty($dokumen->path))
+                                                            <a href="{{ asset('storage/'.$dokumen->path) }}" target="_blank"
+                                                                class="btn btn-sm btn-outline-success">
+                                                                <i class="mdi mdi-eye"></i> Lihat
+                                                            </a>
+                                                        @endif
+                                                        @if(! empty($dokumen->file_name))
+                                                            <span class="badge bg-secondary">{{ $dokumen->file_name }}</span>
+                                                        @endif
+                                                    </li>
+                                                @endforeach
+                                            @else
+                                                <li class="list-group-item">Tidak ada dokumen diupload.</li>
+                                            @endif
+                                        </ul>
+                                    </div>
+                                </div>
                             </div>
                         @else
                             <div class="card-body">

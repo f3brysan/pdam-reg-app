@@ -10,4 +10,9 @@ class MsJenisDokumen extends Model
     protected $fillable = ['id', 'nama', 'slug'];
     protected $primaryKey = 'id';
     public $timestamps = true;
+
+    public function permohonanDokumenTransactions()
+    {
+        return $this->hasMany(PermohonanDokumenTransaction::class, 'ms_jenis_dokumen_id', 'id');
+    }
 }
