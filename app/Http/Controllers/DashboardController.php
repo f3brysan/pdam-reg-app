@@ -31,21 +31,28 @@ class DashboardController extends Controller
                 ->whereNotNull('user_id')
                 ->where('last_activity', '>=', now()->subMinutes(5)->timestamp);
         })
-        ->with('roles')
-        ->limit(10)
         ->get();
-        return view('dashboard.admin.index', compact('onlineUsers'));
+        
+        
+        $permohonanTransactions = PermohonanTransaction::where('status', 'DIAJUKAN')
+            ->orderBy('created_at', 'desc')            
+            ->get();
+        
+        return view('dashboard.admin.index', compact('onlineUsers', 'permohonanTransactions'));
     }
 
     public function userIndex()
     {
-        $permohonanTransactions = PermohonanTransaction::where('id', Auth::user()->id)->first(); 
-        
-        $dokumenPendukung = DB::table('ms_jenis_dokumens')   
-            ->leftJoin('permohonan_dokumen_transactions', 'ms_jenis_dokumens.id', '=', 'permohonan_dokumen_transactions.ms_jenis_dokumen_id')
-            ->where('permohonan_dokumen_transactions.permohonan_transaction_id', $permohonanTransactions->id)
-            ->get();
-        
+        $permohonanTransactions = PermohonanTransaction::where('id', Auth::user()->id)->first();
+
+        $dokumenPendukung = [];
+        if ($permohonanTransactions) {
+            $dokumenPendukung = DB::table('ms_jenis_dokumens')
+                ->leftJoin('permohonan_dokumen_transactions', 'ms_jenis_dokumens.id', '=', 'permohonan_dokumen_transactions.ms_jenis_dokumen_id')
+                ->where('permohonan_dokumen_transactions.permohonan_transaction_id', $permohonanTransactions->id)
+                ->get();
+        }
+
         return view('dashboard.user.index', compact('permohonanTransactions', 'dokumenPendukung'));
     }
 }
