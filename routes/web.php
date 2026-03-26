@@ -25,11 +25,14 @@ route::group(['middleware' => 'auth'], function () {
     route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     route::prefix('permohonan')->group(function () {
-        route::get('/', [PermohonanController::class, 'index'])->name('permohonan.index');
+        route::group(['middleware' => ['role:admin']], function () {
+            route::get('/', [PermohonanController::class, 'index'])->name('permohonan.index');           
+            route::get('/{id}', [PermohonanController::class, 'show'])->name('permohonan.show');
+            route::post('/{id}/delete', [PermohonanController::class, 'destroy'])->name('permohonan.delete');
+        });
+
         route::get('/create', [PermohonanController::class, 'create'])->name('permohonan.create');
         route::post('/store', [PermohonanController::class, 'store'])->name('permohonan.store');
-        route::get('/{id}', [PermohonanController::class, 'show'])->name('permohonan.show');
-        route::post('/{id}/delete', [PermohonanController::class, 'destroy'])->name('permohonan.delete');
     });
 
     route::group(['middleware' => ['role:admin']], function () {

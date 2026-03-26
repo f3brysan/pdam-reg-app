@@ -8,6 +8,7 @@ use App\Models\MsPekerjaan;
 use App\Models\PermohonanDokumenTransaction;
 use App\Models\PermohonanTransaction;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
@@ -15,7 +16,11 @@ class PermohonanController extends Controller
 {
     public function index()
     {
-        return view('permohonan.index');
+        $permohonans = PermohonanTransaction::with(['msPekerjaan', 'msJenisTempatTinggal'])
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('permohonan.admin.index', compact('permohonans'));
     }
 
     public function create()
@@ -143,5 +148,19 @@ class PermohonanController extends Controller
                 'message' => $th->getMessage()
             ], 500);
         }
+    }
+
+    public function show($id)
+    {
+        $id = Crypt::decryptString($id);
+        $permohonan = PermohonanTransaction::with(['msPekerjaan', 'msJenisTempatTinggal'])
+            ->where('id', $id)
+            ->first();
+        
+        $permohonanDokumen = PermohonanDokumenTransaction::with(['msJenisDokumen'])
+            ->where('permohonan_transaction_id', $id)
+            ->get();
+
+        return view('permohonan.admin.show', compact('permohonan', 'permohonanDokumen'));
     }
 }

@@ -9,6 +9,12 @@
         </a>
       </li>
       @role('admin')
+      <li class="menu-item {{ request()->is('permohonan*') ? 'active' : '' }}">
+        <a href="{{ route('permohonan.index') }}" class="menu-link">
+          <i class="menu-icon tf-icons mdi mdi-file-outline"></i>
+          <div data-i18n="Permohonan">Permohonan</div>
+        </a>
+      </li>
       <li class="menu-item menu-dropdown {{ request()->is('master*') ? 'active' : '' }}">
         <a href="javascript:void(0);" class="menu-link menu-toggle">
           <i class="menu-icon tf-icons mdi mdi-database-outline"></i>
