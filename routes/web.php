@@ -32,6 +32,8 @@ route::group(['middleware' => 'auth'], function () {
             route::post('/{id}/delete', [PermohonanController::class, 'destroy'])->name('permohonan.delete');
         });
 
+        route::post('/{id}/upload-bukti-pembayaran', [PermohonanController::class, 'uploadBuktiPembayaran'])->name('permohonan.upload-bukti-pembayaran');
+
         route::get('/create', [PermohonanController::class, 'create'])->name('permohonan.create');
         route::post('/store', [PermohonanController::class, 'store'])->name('permohonan.store');
     });

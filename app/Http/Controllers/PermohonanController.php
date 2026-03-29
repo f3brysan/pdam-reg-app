@@ -182,12 +182,21 @@ class PermohonanController extends Controller
             }
 
             $createVA = rand(1000, 9999).$permohonan->no_register;
+
+            DB::beginTransaction();
+
             $createBilling = PermohonanBiling::create([
                 'id' => $id,
                 'no_va' => $createVA,
                 'path' => null,
                 'is_valid' => false,
             ]);
+
+            $updateStatus = PermohonanTransaction::where('id', $id)->update([
+                'status' => 'MENUNGGU PEMBAYARAN',
+            ]);
+
+            DB::commit();
 
             return response()->json([
                 'success' => true,
@@ -196,6 +205,54 @@ class PermohonanController extends Controller
             ], 200);
             
         } catch (\Throwable $th) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => $th->getMessage()
+            ], 500);
+        }
+    }
+
+    public function uploadBuktiPembayaran(Request $request, $id)
+    {
+        try {
+            $id = Crypt::decryptString($id);
+
+            $validate = Validator::make($request->all(), [
+                'bukti_pembayaran' => 'required|mimes:jpeg,png,jpg,gif,svg,pdf|max:2048',
+            ]);
+
+            if ($validate->fails()) {
+                return response()->json([
+                    'success' => false,
+                    'error_type' => 'validation_error',
+                    'field' => 'bukti_pembayaran',
+                    'message' => $validate->errors()->first(),
+                    'all_errors' => $validate->errors()
+                ], 422);
+            }
+
+            $file = $request->file('bukti_pembayaran');
+            $path = $file->store('uploads/bukti_pembayaran', 'public');
+            
+            DB::beginTransaction();
+            $updateBilling = PermohonanBiling::where('id', $id)->update([
+                'path' => $path,
+            ]);
+
+            $updateStatus = PermohonanTransaction::where('id', $id)->update([
+                'status' => 'MENUNGGU VERIFIKASI PEMBAYARAN',
+            ]);
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Bukti pembayaran berhasil diunggah',
+                'data' => $updateBilling
+            ], 200);
+        } catch (\Throwable $th) {
+            DB::rollBack();
             return response()->json([
                 'success' => false,
                 'message' => $th->getMessage()

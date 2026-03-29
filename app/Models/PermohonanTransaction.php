@@ -35,4 +35,9 @@ class PermohonanTransaction extends Model
     {
         return $this->belongsTo(User::class, 'id', 'id');
     }
+
+    public function permohonanBiling()
+    {
+        return $this->hasOne(PermohonanBiling::class, 'id', 'id');
+    }
 }

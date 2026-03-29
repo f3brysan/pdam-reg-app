@@ -6,7 +6,7 @@
     <div class="row gy-4 mb-4">
         <!-- User Dashboard Mockup: Informasi Permohonan & Status -->
         <div class="col-md-12 col-lg-12">
-            <div class="card">
+            <div class="card mb-3">
                 <div class="d-flex align-items-end row">
                     <div class="col-md-12 order-2 order-md-1">
                         @if ($permohonanTransactions)
@@ -17,7 +17,7 @@
                                     <div class="col-12 col-sm-6 col-md-3">
                                         <div class="d-flex flex-column align-items-center p-3 border rounded bg-light h-100">
                                             <span class="fw-semibold mb-2">Verifikasi Petugas</span>
-                                            @if(isset($permohonanTransactions) && ($permohonanTransactions->status == 'DIVERIFIKASI' || $permohonanTransactions->status == 'DISETUJUI' || $permohonanTransactions->status == 'SELESAI' || $permohonanTransactions->status == 'DIBAYAR' || $permohonanTransactions->status == 'PEMASANGAN'))
+                                            @if (! empty($permohonanTransactions->permohonanBiling))
                                                 <i class="mdi mdi-check-circle text-success fs-2"></i>
                                             @else
                                                 <i class="mdi mdi-timer-sand text-warning fs-2"></i>
@@ -27,10 +27,14 @@
                                     <div class="col-12 col-sm-6 col-md-3">
                                         <div class="d-flex flex-column align-items-center p-3 border rounded bg-light h-100">
                                             <span class="fw-semibold mb-2">Pembayaran</span>
-                                            @if(isset($permohonanTransactions) && ($permohonanTransactions->status == 'DIBAYAR' || $permohonanTransactions->status == 'PEMASANGAN' || $permohonanTransactions->status == 'SELESAI'))
-                                                <i class="mdi mdi-check-circle text-success fs-2"></i>
-                                            @else
+                                            @if (empty($permohonanTransactions->permohonanBiling))
                                                 <i class="mdi mdi-close-circle text-danger fs-2"></i>
+                                            @elseif ($permohonanTransactions->permohonanBiling->path == null)
+                                                <i class="fa fa-file-invoice-dollar text-warning fs-2"></i>
+                                            @elseif ($permohonanTransactions->permohonanBiling->path != null && $permohonanTransactions->permohonanBiling->is_valid == false)
+                                                <i class="mdi mdi-timer-sand text-warning fs-2"></i>
+                                            @else
+                                                <i class="mdi mdi-check-circle text-success fs-2"></i>
                                             @endif
                                         </div>
                                     </div>
@@ -76,10 +80,15 @@
                                         </li>
                                         <li class="list-group-item d-flex justify-content-between align-items-center">
                                             <span><i class="mdi mdi-clock-outline me-2"></i>Status Pembayaran</span>
-                                            <span class="badge bg-warning text-dark">Belum Lunas</span>
+                                            @if (! empty($permohonanTransactions->permohonanBiling) && $permohonanTransactions->permohonanBiling->path != null)
+                                                <span class="badge bg-success text-dark">Lunas</span>
+                                            @else
+                                                <span class="badge bg-warning text-dark">Belum Lunas</span>
+                                            @endif
                                         </li>
                                     </ul>
                                 </div>
+
                                 <div class="row">
                                     <div class="col-12">
                                         <h6 class="fw-semibold my-3">Dokumen yang Diupload</h6>
@@ -123,6 +132,97 @@
                     </div>
                 </div>
             </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-6 text-center">
+                            <h6 class="fw-semibold my-3">Nomor VA</h6>
+                            <span class="fw-semibold">{{ $permohonanTransactions->permohonanBiling->no_va }}</span>
+                        </div>
+                        <div class="col-6 text-center">
+                            <h6 class="fw-semibold my-3">Cara Pembayaran</h6>
+                            <button class="btn btn-outline-primary btn-sm">
+                                <i class="mdi mdi-cash-multiple-outline me-2"></i>
+                                Lihat Cara Pembayaran
+                            </button>
+                        </div>
+                    </div>
+
+                    @if($permohonanTransactions->permohonanBiling->path !== null)
+                        <div class="row mb-3">
+                            <div class="col-6 text-center">
+                                <h6>Bukti Pembayaran</h6>
+                            </div>
+                            <div class="col-6 text-center">
+                                <a href="{{ asset('storage/'.$permohonanTransactions->permohonanBiling->path) }}"
+                                    target="_blank" class="btn btn-outline-primary btn-sm">
+                                    <i class="mdi mdi-eye-outline me-2"></i>
+                                    Lihat Bukti Pembayaran
+                                </a>
+                            </div>
+                        </div>
+                    @endif
+                    <div class="row mb-3">
+                        <form id="form-upload-bukti-pembayaran" enctype="multipart/form-data">
+                            <div class="col-12 text-center">
+                                <h6>Unggah Bukti Pembayaran</h6>
+                                <p class="text-muted">Format file yang diizinkan: PDF, JPG, JPEG, PNG. Maksimal 2MB</p>
+                                <div class="form-group">
+                                    <input type="file" name="bukti_pembayaran" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-12 text-center">
+                                <button type="submit" class="btn btn-outline-primary btn-sm mt-3 float-end">
+                                    <i class="mdi mdi-upload-outline me-2"></i>
+                                    Unggah
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 @endsection
+
+@push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        $(function () {
+            $('#form-upload-bukti-pembayaran').on('submit', function (e) {
+                e.preventDefault();
+                const formData = new FormData(this);
+
+                $.ajax({
+                    url: "{{ route('permohonan.upload-bukti-pembayaran', Crypt::encryptString($permohonanTransactions->id)) }}",
+                    type: 'POST',
+                    data: formData,
+                    dataType: 'json',
+                    processData: false,
+                    contentType: false,
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    },
+                    success: function (response) {
+                        Swal.fire({
+                            title: 'Berhasil',
+                            text: response.message,
+                            icon: 'success'
+                        });
+
+                        location.reload();
+                    },
+                    error: function (xhr) {
+                        var msg = (xhr.responseJSON && xhr.responseJSON.message) ? xhr.responseJSON.message : 'Terjadi kesalahan.';
+                        if (typeof toastr !== 'undefined') {
+                            toastr.error(msg);
+                        } else {
+                            Swal.fire({ title: 'Gagal', text: msg, icon: 'error' });
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+@endpush
