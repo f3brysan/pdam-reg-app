@@ -29,6 +29,7 @@ route::group(['middleware' => 'auth'], function () {
             route::get('/', [PermohonanController::class, 'index'])->name('permohonan.index');           
             route::get('/{id}', [PermohonanController::class, 'show'])->name('permohonan.show');
             route::post('/{id}/validasi', [PermohonanController::class, 'validasi'])->name('permohonan.validasi');
+            route::post('/{id}/verifikasi-pembayaran', [PermohonanController::class, 'verifikasiPembayaran'])->name('permohonan.verifikasi-pembayaran');
             route::post('/{id}/delete', [PermohonanController::class, 'destroy'])->name('permohonan.delete');
         });
 

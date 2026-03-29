@@ -109,12 +109,8 @@
                             class="btn btn-sm btn-outline-primary">Lihat</a>
 
                         <div class="d-flex justify-content-end align-items-center">
-                            <form action="{{ route('permohonan.validasi', Crypt::encryptString($permohonan->id)) }}"
-                                method="POST" style="display: inline-block;" id="form-verifikasi">
-                                @csrf
-                                <button type="submit" class="btn btn-sm btn-success ms-2"
-                                    id="btn-verifikasi">Verifikasi Pembayaran</button>
-                            </form>
+                            <button class="btn btn-sm btn-success ms-2" id="btn-verifikasi-pembayaran">Verifikasi
+                                Pembayaran</button>
                         </div>
                     </div>
                 </div>
@@ -199,6 +195,7 @@
 
     <script>
         $(document).ready(function () {
+        });
 
             $('#btn-validasi-permohonan').click(function () {
                 Swal.fire({
@@ -244,6 +241,50 @@
                     }
                 })
             })
-        })
+
+            $('#btn-verifikasi-pembayaran').click(function () {
+                Swal.fire({
+                    title: 'Verifikasi Pembayaran',
+                    text: 'Apakah Anda yakin ingin verifikasi pembayaran ini?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Ya',
+                    cancelButtonText: 'Tidak',
+                }).then(function (result) {
+                    if (result.isConfirmed) {
+                        Swal.fire({
+                            title: 'Loading',
+                            text: 'Memproses verifikasi pembayaran...',
+                            icon: 'info',
+                            showConfirmButton: false,
+                            allowOutsideClick: false,
+                        });
+                        
+                        $.ajax({
+                            url: "{{ route('permohonan.verifikasi-pembayaran', Crypt::encryptString($permohonan->id)) }}",
+                            type: 'POST',
+                            data: {
+                                _token: '{{ csrf_token() }}',
+                            },
+                            success: function (response) {
+                                Swal.fire({
+                                    title: 'Success',
+                                    text: 'Pembayaran berhasil diverifikasi',
+                                    icon: 'success',
+                                }).then(function () {
+                                    location.reload();
+                                });
+                            },
+                            error: function (xhr, status, error) {
+                                Swal.fire({
+                                    title: 'Error',
+                                    text: 'Terjadi kesalahan saat verifikasi pembayaran',
+                                    icon: 'error',
+                                });
+                            }
+                        });
+                    }
+                });
+            });
     </script>
 @endpush

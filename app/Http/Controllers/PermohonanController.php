@@ -105,7 +105,7 @@ class PermohonanController extends Controller
                 'nama' => $request->nama,
                 'nik' => $request->nik,
                 'alamat' => $request->alamat,
-                'telepon' => $request->telepon, 
+                'telepon' => $request->telepon,
                 'ms_jenis_tempat_tinggal_id' => $request->jenis_tempat_tinggal,
                 'ms_pekerjaan_id' => $request->pekerjaan,
                 'jumlah_kran' => $request->jumlah_kran,
@@ -159,7 +159,7 @@ class PermohonanController extends Controller
             ->first();
 
         $permohonanBiling = PermohonanBiling::where('id', $id)->first();
-        
+
         $permohonanDokumen = PermohonanDokumenTransaction::with(['msJenisDokumen'])
             ->where('permohonan_transaction_id', $id)
             ->get();
@@ -203,7 +203,7 @@ class PermohonanController extends Controller
                 'message' => 'Permohonan berhasil divalidasi',
                 'data' => $createBilling
             ], 200);
-            
+
         } catch (\Throwable $th) {
             DB::rollBack();
             return response()->json([
@@ -234,7 +234,7 @@ class PermohonanController extends Controller
 
             $file = $request->file('bukti_pembayaran');
             $path = $file->store('uploads/bukti_pembayaran', 'public');
-            
+
             DB::beginTransaction();
             $updateBilling = PermohonanBiling::where('id', $id)->update([
                 'path' => $path,
@@ -253,6 +253,44 @@ class PermohonanController extends Controller
             ], 200);
         } catch (\Throwable $th) {
             DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => $th->getMessage()
+            ], 500);
+        }
+    }
+
+    public function verifikasiPembayaran(Request $request, $id)
+    {
+        try {
+            $id = Crypt::decryptString($id);
+            $permohonan = PermohonanTransaction::where('id', $id)->first();
+            $checkBilling = PermohonanBiling::where('id', $id)->first();
+
+            if (! $checkBilling) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Permohonan tidak ditemukan',
+                ], 422);
+            }
+
+            DB::beginTransaction();
+            $updateBilling = PermohonanBiling::where('id', $id)->update([
+                'is_valid' => true,
+            ]);
+
+            $updateStatus = PermohonanTransaction::where('id', $id)->update([
+                'status' => 'MENUNGGU JADWAL PEMASANGAN',
+            ]);
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Permohonan berhasil diverifikasi',
+                'data' => $updateStatus
+            ], 200);
+        } catch (\Throwable $th) {
             return response()->json([
                 'success' => false,
                 'message' => $th->getMessage()

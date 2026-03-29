@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\MsJenisDokumen;
 use App\Models\PermohonanTransaction;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;

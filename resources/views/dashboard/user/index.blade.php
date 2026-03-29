@@ -81,7 +81,11 @@
                                         <li class="list-group-item d-flex justify-content-between align-items-center">
                                             <span><i class="mdi mdi-clock-outline me-2"></i>Status Pembayaran</span>
                                             @if (! empty($permohonanTransactions->permohonanBiling) && $permohonanTransactions->permohonanBiling->path != null)
-                                                <span class="badge bg-success text-dark">Lunas</span>
+                                                @if($permohonanTransactions->permohonanBiling->is_valid == false)
+                                                    <span class="badge bg-warning text-dark">Belum Tervalidasi</span>
+                                                @else
+                                                    <span class="badge bg-success text-dark">Lunas</span>
+                                                @endif
                                             @else
                                                 <span class="badge bg-warning text-dark">Belum Lunas</span>
                                             @endif
