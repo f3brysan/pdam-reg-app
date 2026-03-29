@@ -142,7 +142,7 @@
                     <div class="row mb-3">
                         <div class="col-6 text-center">
                             <h6 class="fw-semibold my-3">Nomor VA</h6>
-                            <span class="fw-semibold">{{ $permohonanTransactions->permohonanBiling->no_va }}</span>
+                            <span class="fw-semibold">{{ $permohonanTransactions->permohonanBiling->no_va ?? '-' }}</span>
                         </div>
                         <div class="col-6 text-center">
                             <h6 class="fw-semibold my-3">Cara Pembayaran</h6>
@@ -153,7 +153,7 @@
                         </div>
                     </div>
 
-                    @if($permohonanTransactions->permohonanBiling->path !== null)
+                    @if(!empty($permohonanTransactions->permohonanBiling) && $permohonanTransactions->permohonanBiling->path !== null)
                         <div class="row mb-3">
                             <div class="col-6 text-center">
                                 <h6>Bukti Pembayaran</h6>
