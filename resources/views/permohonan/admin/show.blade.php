@@ -84,6 +84,15 @@
                             </div>
 
                         </div>
+                        @if (empty($permohonanBiling))
+                            <div class="row">
+                                <div class="col-12 d-flex justify-content-end">
+                                    <button class="btn btn-sm btn-success" id="btn-validasi-permohonan">
+                                        <i class="fa fa-check"></i> Validasi Permohonan
+                                    </button>
+                                </div>
+                            </div>
+                        @endif
                     @endif
                 </div>
             </div>
@@ -139,6 +148,8 @@
 
 @push('scripts')
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             var latEl = document.getElementById('latitude-value');
@@ -161,5 +172,55 @@
                 .bindPopup('Lokasi pemasangan')
                 .openPopup();
         });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+
+            $('#btn-validasi-permohonan').click(function () {
+                Swal.fire({
+                    title: 'Validasi Permohonan',
+                    text: 'Apakah Anda yakin ingin validasi permohonan ini?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Ya',
+                    cancelButtonText: 'Tidak',                    
+                }).then(function (result) {
+                    if (result.isConfirmed) {
+                        Swal.fire({
+                            title: 'Loading',
+                            text: 'Memproses validasi permohonan...',
+                            icon: 'info',
+                            showConfirmButton: false,
+                            allowOutsideClick: false,
+                        });
+
+                        $.ajax({
+                            url: '{{ route('permohonan.validasi', Crypt::encryptString($permohonan->id)) }}',
+                            type: 'POST',
+                            data: {
+                                _token: '{{ csrf_token() }}',
+                            },
+                            success: function (response) {
+                                Swal.fire({
+                                    title: 'Success',
+                                    text: 'Permohonan berhasil divalidasi',
+                                    icon: 'success',
+                                })
+
+                                location.reload();
+                            },
+                            error: function (xhr, status, error) {
+                                Swal.fire({
+                                    title: 'Error',
+                                    text: 'Terjadi kesalahan saat validasi permohonan',
+                                    icon: 'error',
+                                })
+                            }
+                        })
+                    }
+                })
+            })
+        })
     </script>
 @endpush

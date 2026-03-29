@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\MsJenisDokumen;
 use App\Models\MsJenisTempatTinggal;
 use App\Models\MsPekerjaan;
+use App\Models\PermohonanBiling;
 use App\Models\PermohonanDokumenTransaction;
 use App\Models\PermohonanTransaction;
 use Illuminate\Http\Request;
@@ -156,11 +157,49 @@ class PermohonanController extends Controller
         $permohonan = PermohonanTransaction::with(['msPekerjaan', 'msJenisTempatTinggal'])
             ->where('id', $id)
             ->first();
+
+        $permohonanBiling = PermohonanBiling::where('id', $id)->first();
         
         $permohonanDokumen = PermohonanDokumenTransaction::with(['msJenisDokumen'])
             ->where('permohonan_transaction_id', $id)
             ->get();
 
-        return view('permohonan.admin.show', compact('permohonan', 'permohonanDokumen'));
+        return view('permohonan.admin.show', compact('permohonan', 'permohonanDokumen', 'permohonanBiling'));
+    }
+
+    public function validasi(Request $request, $id)
+    {
+        try {
+            $id = Crypt::decryptString($id);
+            $permohonan = PermohonanTransaction::where('id', $id)->first();
+            $checkBilling = PermohonanBiling::where('id', $id)->first();
+
+            if ($checkBilling) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Permohonan sudah divalidasi',
+                ], 422);
+            }
+
+            $createVA = rand(1000, 9999).$permohonan->no_register;
+            $createBilling = PermohonanBiling::create([
+                'id' => $id,
+                'no_va' => $createVA,
+                'path' => null,
+                'is_valid' => false,
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Permohonan berhasil divalidasi',
+                'data' => $createBilling
+            ], 200);
+            
+        } catch (\Throwable $th) {
+            return response()->json([
+                'success' => false,
+                'message' => $th->getMessage()
+            ], 500);
+        }
     }
 }
