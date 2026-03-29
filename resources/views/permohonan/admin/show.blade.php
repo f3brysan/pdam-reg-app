@@ -23,7 +23,7 @@
 
     <div class="row g-4">
         <div class="col-lg-8">
-            <div class="card">
+            <div class="card mb-4">
                 <div class="card-header">
                     <h5 class="card-title mb-0">Informasi Permohonan</h5>
                 </div>
@@ -96,6 +96,29 @@
                     @endif
                 </div>
             </div>
+
+            @if (! empty($permohonanBiling))
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Bukti Pembayaran</h5>
+                    </div>
+                    <div class="card-body">
+                        <h6>Nomor VA : {{ $permohonanBiling->no_va }}</h6>
+                        <h6>Bukti Pembayaran</h6>
+                        <a href="{{ asset('storage/'.$permohonanBiling->path) }}" target="_blank"
+                            class="btn btn-sm btn-outline-primary">Lihat</a>
+
+                        <div class="d-flex justify-content-end align-items-center">
+                            <form action="{{ route('permohonan.validasi', Crypt::encryptString($permohonan->id)) }}"
+                                method="POST" style="display: inline-block;" id="form-verifikasi">
+                                @csrf
+                                <button type="submit" class="btn btn-sm btn-success ms-2"
+                                    id="btn-verifikasi">Verifikasi Pembayaran</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            @endif
         </div>
 
         <div class="col-lg-4">
@@ -184,7 +207,7 @@
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonText: 'Ya',
-                    cancelButtonText: 'Tidak',                    
+                    cancelButtonText: 'Tidak',
                 }).then(function (result) {
                     if (result.isConfirmed) {
                         Swal.fire({
