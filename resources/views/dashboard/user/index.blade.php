@@ -137,55 +137,59 @@
                 </div>
             </div>
 
-            <div class="card">
-                <div class="card-body">
-                    <div class="row mb-3">
-                        <div class="col-6 text-center">
-                            <h6 class="fw-semibold my-3">Nomor VA</h6>
-                            <span class="fw-semibold">{{ $permohonanTransactions->permohonanBiling->no_va ?? '-' }}</span>
-                        </div>
-                        <div class="col-6 text-center">
-                            <h6 class="fw-semibold my-3">Cara Pembayaran</h6>
-                            <button class="btn btn-outline-primary btn-sm">
-                                <i class="mdi mdi-cash-multiple-outline me-2"></i>
-                                Lihat Cara Pembayaran
-                            </button>
-                        </div>
-                    </div>
-
-                    @if(!empty($permohonanTransactions->permohonanBiling) && $permohonanTransactions->permohonanBiling->path !== null)
+            @if ($permohonanTransactions && $permohonanTransactions->permohonanBiling)
+                <div class="card">
+                    <div class="card-body">
                         <div class="row mb-3">
                             <div class="col-6 text-center">
-                                <h6>Bukti Pembayaran</h6>
+                                <h6 class="fw-semibold my-3">Nomor VA</h6>
+                                <span class="fw-semibold">{{ $permohonanTransactions->permohonanBiling->no_va ?? '-' }}</span>
                             </div>
                             <div class="col-6 text-center">
-                                <a href="{{ asset('storage/'.$permohonanTransactions->permohonanBiling->path) }}"
-                                    target="_blank" class="btn btn-outline-primary btn-sm">
-                                    <i class="mdi mdi-eye-outline me-2"></i>
-                                    Lihat Bukti Pembayaran
-                                </a>
-                            </div>
-                        </div>
-                    @endif
-                    <div class="row mb-3">
-                        <form id="form-upload-bukti-pembayaran" enctype="multipart/form-data">
-                            <div class="col-12 text-center">
-                                <h6>Unggah Bukti Pembayaran</h6>
-                                <p class="text-muted">Format file yang diizinkan: PDF, JPG, JPEG, PNG. Maksimal 2MB</p>
-                                <div class="form-group">
-                                    <input type="file" name="bukti_pembayaran" class="form-control">
-                                </div>
-                            </div>
-                            <div class="col-12 text-center">
-                                <button type="submit" class="btn btn-outline-primary btn-sm mt-3 float-end">
-                                    <i class="mdi mdi-upload-outline me-2"></i>
-                                    Unggah
+                                <h6 class="fw-semibold my-3">Cara Pembayaran</h6>
+                                <button class="btn btn-outline-primary btn-sm">
+                                    <i class="mdi mdi-cash-multiple-outline me-2"></i>
+                                    Lihat Cara Pembayaran
                                 </button>
                             </div>
-                        </form>
+                        </div>
+
+                        @if(! empty($permohonanTransactions->permohonanBiling) && $permohonanTransactions->permohonanBiling->path !== null)
+                            <div class="row mb-3">
+                                <div class="col-6 text-center">
+                                    <h6>Bukti Pembayaran</h6>
+                                </div>
+                                <div class="col-6 text-center">
+                                    <a href="{{ asset('storage/'.$permohonanTransactions->permohonanBiling->path) }}"
+                                        target="_blank" class="btn btn-outline-primary btn-sm">
+                                        <i class="mdi mdi-eye-outline me-2"></i>
+                                        Lihat Bukti Pembayaran
+                                    </a>
+                                </div>
+                            </div>
+                        @endif
+                        <div class="row mb-3">
+                            <form id="form-upload-bukti-pembayaran" enctype="multipart/form-data">
+                                @csrf
+                                <input type="hidden" name="permohonan_transaction_id" value="{{ $permohonanTransactions->id ?? null }}">
+                                <div class="col-12 text-center">
+                                    <h6>Unggah Bukti Pembayaran</h6>
+                                    <p class="text-muted">Format file yang diizinkan: PDF, JPG, JPEG, PNG. Maksimal 2MB</p>
+                                    <div class="form-group">
+                                        <input type="file" name="bukti_pembayaran" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-12 text-center">
+                                    <button type="submit" class="btn btn-outline-primary btn-sm mt-3 float-end">
+                                        <i class="mdi mdi-upload-outline me-2"></i>
+                                        Unggah
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 </div>
-            </div>
+            @endif
         </div>
     </div>
 @endsection
@@ -199,7 +203,7 @@
                 const formData = new FormData(this);
 
                 $.ajax({
-                    url: "{{ route('permohonan.upload-bukti-pembayaran', Crypt::encryptString($permohonanTransactions->id)) }}",
+                    url: "{{ route('permohonan.upload-bukti-pembayaran') }}",
                     type: 'POST',
                     data: formData,
                     dataType: 'json',
