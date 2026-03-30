@@ -8,6 +8,7 @@ use App\Http\Controllers\MsJenisTempatTinggalController;
 use App\Http\Controllers\MsPekerjaanController;
 use App\Http\Controllers\PermohonanController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\WilayahController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -21,22 +22,26 @@ route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 route::get('/register', [AuthController::class, 'register'])->name('register');
 route::post('/register', [AuthController::class, 'registerStore'])->name('register.store');
 
+route::get('/get-kecamatan/{parr}', [WilayahController::class, 'getKecamatan'])->name('get-kecamatan');
+route::get('/get-kelurahan/{parr}', [WilayahController::class, 'getKelurahan'])->name('get-kelurahan');
+
 route::group(['middleware' => 'auth'], function () {
     route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     route::prefix('permohonan')->group(function () {
+        route::group(['middleware' => ['role:user']], function () {
+            route::post('/upload-bukti-pembayaran', [PermohonanController::class, 'uploadBuktiPembayaran'])->name('permohonan.upload-bukti-pembayaran');
+            route::get('/create', [PermohonanController::class, 'create'])->name('permohonan.create');
+            route::post('/store', [PermohonanController::class, 'store'])->name('permohonan.store');
+        });
+        
         route::group(['middleware' => ['role:admin']], function () {
-            route::get('/', [PermohonanController::class, 'index'])->name('permohonan.index');           
+            route::get('/', [PermohonanController::class, 'index'])->name('permohonan.index');
             route::get('/{id}', [PermohonanController::class, 'show'])->name('permohonan.show');
             route::post('/{id}/validasi', [PermohonanController::class, 'validasi'])->name('permohonan.validasi');
             route::post('/{id}/verifikasi-pembayaran', [PermohonanController::class, 'verifikasiPembayaran'])->name('permohonan.verifikasi-pembayaran');
             route::post('/{id}/delete', [PermohonanController::class, 'destroy'])->name('permohonan.delete');
         });
-
-        route::post('/{id}/upload-bukti-pembayaran', [PermohonanController::class, 'uploadBuktiPembayaran'])->name('permohonan.upload-bukti-pembayaran');
-
-        route::get('/create', [PermohonanController::class, 'create'])->name('permohonan.create');
-        route::post('/store', [PermohonanController::class, 'store'])->name('permohonan.store');
     });
 
     route::group(['middleware' => ['role:admin']], function () {
