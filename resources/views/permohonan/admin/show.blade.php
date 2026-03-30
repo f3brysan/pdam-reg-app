@@ -104,14 +104,19 @@
                     </div>
                     <div class="card-body">
                         <h6>Nomor VA : {{ $permohonanBiling->no_va }}</h6>
-                        <h6>Bukti Pembayaran</h6>
-                        <a href="{{ asset('storage/'.$permohonanBiling->path) }}" target="_blank"
-                            class="btn btn-sm btn-outline-primary">Lihat</a>
+                        <h6>Harga : Rp. {{ number_format($permohonanBiling->price, 0, ',', '.') }}</h6>
+                        @if ($permohonanBiling->path)
+                            <h6>Bukti Pembayaran</h6>
+                            <a href="{{ asset('storage/'.$permohonanBiling->path) }}" target="_blank"
+                                class="btn btn-sm btn-outline-primary">Lihat</a>
 
-                        <div class="d-flex justify-content-end align-items-center">
-                            <button class="btn btn-sm btn-success ms-2" id="btn-verifikasi-pembayaran">Verifikasi
-                                Pembayaran</button>
-                        </div>
+                            <div class="d-flex justify-content-end align-items-center">
+                                <button class="btn btn-sm btn-success ms-2" id="btn-verifikasi-pembayaran">Verifikasi
+                                    Pembayaran</button>
+                            </div>
+                        @else
+                            <h6 class="text-danger">Bukti Pembayaran belum diupload</h6>
+                        @endif
                     </div>
                 </div>
             @endif
@@ -163,12 +168,41 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal Input Harga -->
+    <div class="modal fade" id="modalInputHarga" tabindex="-1" aria-labelledby="modalInputHargaLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <form id="form-input-harga">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalInputHargaLabel">Input Harga Permohonan</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="input-harga" class="form-label">Harga</label>
+                            <input type="text" class="form-control" id="input-harga" name="harga"
+                                placeholder="Masukkan harga pemasangan" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-primary">Simpan Harga</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
 @endsection
 
 @push('scripts')
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/toastr@2.1.4/build/toastr.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastr@2.1.4/build/toastr.min.css">
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             var latEl = document.getElementById('latitude-value');
@@ -195,96 +229,109 @@
 
     <script>
         $(document).ready(function () {
+            $('#input-harga').mask('000.000.000.000', { reverse: true });
         });
 
-            $('#btn-validasi-permohonan').click(function () {
-                Swal.fire({
-                    title: 'Validasi Permohonan',
-                    text: 'Apakah Anda yakin ingin validasi permohonan ini?',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonText: 'Ya',
-                    cancelButtonText: 'Tidak',
-                }).then(function (result) {
-                    if (result.isConfirmed) {
-                        Swal.fire({
-                            title: 'Loading',
-                            text: 'Memproses validasi permohonan...',
-                            icon: 'info',
-                            showConfirmButton: false,
-                            allowOutsideClick: false,
-                        });
+        $('#btn-validasi-permohonan').click(function () {
+            $('#modalInputHarga').modal('show');
+        });
 
-                        $.ajax({
-                            url: '{{ route('permohonan.validasi', Crypt::encryptString($permohonan->id)) }}',
-                            type: 'POST',
-                            data: {
-                                _token: '{{ csrf_token() }}',
-                            },
-                            success: function (response) {
-                                Swal.fire({
-                                    title: 'Success',
-                                    text: 'Permohonan berhasil divalidasi',
-                                    icon: 'success',
-                                })
+        $('#form-input-harga').submit(function (e) {
+            e.preventDefault();
 
-                                location.reload();
-                            },
-                            error: function (xhr, status, error) {
-                                Swal.fire({
-                                    title: 'Error',
-                                    text: 'Terjadi kesalahan saat validasi permohonan',
-                                    icon: 'error',
-                                })
-                            }
-                        })
-                    }
-                })
+            $('#modalInputHarga').modal('hide');
+
+            let harga = $('#input-harga').val();
+            if (!harga || harga < 0) {
+                Swal.fire('Error', 'Harga tidak valid', 'error');
+                return;
+            }
+
+            Swal.fire({
+                title: 'Validasi Permohonan',
+                text: 'Apakah Anda yakin ingin validasi permohonan ini?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Ya',
+                cancelButtonText: 'Tidak',
+            }).then(function (result) {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: 'Loading',
+                        text: 'Memproses validasi permohonan...',
+                        icon: 'info',
+                        showConfirmButton: false,
+                        allowOutsideClick: false,
+                    });
+
+                    $.ajax({
+                        url: '{{ route('permohonan.validasi', Crypt::encryptString($permohonan->id)) }}',
+                        type: 'POST',
+                        data: {
+                            _token: '{{ csrf_token() }}',
+                            harga: harga,
+                        },
+                        success: function (response) {
+                            Swal.close();
+                            toastr.success('Permohonan berhasil divalidasi');
+
+                            location.reload();
+                        },
+                        error: function (xhr, status, error) {
+                            toastr.error(xhr.responseJSON.message);
+
+                            $("#modalInputHarga").modal("show");
+                        }
+                    })
+                }
             })
 
-            $('#btn-verifikasi-pembayaran').click(function () {
-                Swal.fire({
-                    title: 'Verifikasi Pembayaran',
-                    text: 'Apakah Anda yakin ingin verifikasi pembayaran ini?',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonText: 'Ya',
-                    cancelButtonText: 'Tidak',
-                }).then(function (result) {
-                    if (result.isConfirmed) {
-                        Swal.fire({
-                            title: 'Loading',
-                            text: 'Memproses verifikasi pembayaran...',
-                            icon: 'info',
-                            showConfirmButton: false,
-                            allowOutsideClick: false,
-                        });
-                        
-                        $.ajax({
-                            url: "{{ route('permohonan.verifikasi-pembayaran', Crypt::encryptString($permohonan->id)) }}",
-                            type: 'POST',
-                            data: {
-                                _token: '{{ csrf_token() }}',
-                            },
-                            success: function (response) {
-                                Swal.fire({
-                                    title: 'Success',
-                                    text: 'Pembayaran berhasil diverifikasi',
-                                    icon: 'success',
-                                }).then(function () {
-                                    location.reload();
-                                });
-                            },
-                            error: function (xhr, status, error) {
-                                Swal.fire({
-                                    title: 'Error',
-                                    text: 'Terjadi kesalahan saat verifikasi pembayaran',
-                                    icon: 'error',
-                                });
-                            }
-                        });
-                    }
-                });
+
+        });
+
+        $('#btn-verifikasi-pembayaran').click(function () {
+            Swal.fire({
+                title: 'Verifikasi Pembayaran',
+                text: 'Apakah Anda yakin ingin verifikasi pembayaran ini?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Ya',
+                cancelButtonText: 'Tidak',
+            }).then(function (result) {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: 'Loading',
+                        text: 'Memproses verifikasi pembayaran...',
+                        icon: 'info',
+                        showConfirmButton: false,
+                        allowOutsideClick: false,
+                    });
+
+                    $.ajax({
+                        url: "{{ route('permohonan.verifikasi-pembayaran', Crypt::encryptString($permohonan->id)) }}",
+                        type: 'POST',
+                        data: {
+                            _token: '{{ csrf_token() }}',
+                        },
+                        success: function (response) {
+                            Swal.fire({
+                                title: 'Success',
+                                text: 'Pembayaran berhasil diverifikasi',
+                                icon: 'success',
+                            }).then(function () {
+                                location.reload();
+                            });
+                        },
+                        error: function (xhr, status, error) {
+                            Swal.fire({
+                                title: 'Error',
+                                text: 'Terjadi kesalahan saat verifikasi pembayaran',
+                                icon: 'error',
+                            });
+                        }
+                    });
+                }
             });
+        });
     </script>
 @endpush

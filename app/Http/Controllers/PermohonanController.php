@@ -171,6 +171,8 @@ class PermohonanController extends Controller
     {
         try {
             $id = Crypt::decryptString($id);
+            $harga = $request->harga;
+            $harga = str_replace('.', '', $harga);
             $permohonan = PermohonanTransaction::where('id', $id)->first();
             $checkBilling = PermohonanBiling::where('id', $id)->first();
 
@@ -189,6 +191,7 @@ class PermohonanController extends Controller
                 'id' => $id,
                 'no_va' => $createVA,
                 'path' => null,
+                'price' => $harga,
                 'is_valid' => false,
             ]);
 
