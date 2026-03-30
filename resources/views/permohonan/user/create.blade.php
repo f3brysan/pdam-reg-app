@@ -128,43 +128,42 @@
                         <div class="tab-pane fade" id="lokasi" role="tabpanel" aria-labelledby="lokasi-tab">
                             <!-- Lokasi Pemasangan Content -->
                             <h5>Lokasi Pemasangan</h5>
-                                <div class="mb-3">
-                                    <label for="tgl_daftar" class="form-label">Tanggal Daftar</label>
-                                    <input type="date" class="form-control" id="tgl_daftar" name="tgl_daftar"
-                                        value="{{ date('Y-m-d') }}" readonly>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="nomor_rumah" class="form-label">Nomor Rumah</label>
-                                    <input type="text" class="form-control" id="nomor_rumah" name="nomor_rumah">
-                                </div>
-                                <div class="mb-3">
-                                    <label for="kecamatan" class="form-label">Kecamatan</label>
-                                    <input type="text" class="form-control" id="kecamatan" name="kecamatan">
-                                </div>
-                                <div class="mb-3">
-                                    <label for="kelurahan" class="form-label">Kelurahan</label>
-                                    <input type="text" class="form-control" id="kelurahan" name="kelurahan">
-                                </div>
-                                <div class="mb-3">
-                                    <label for="latitude" class="form-label">Latitude</label>
-                                    <input type="text" name="latitude" id="latitude" readonly class="form-control"
-                                        value="{{ old('latitude', $data->latitude ?? '') }}">
-                                </div>
+                            <div class="mb-3">
+                                <label for="tgl_daftar" class="form-label">Tanggal Daftar</label>
+                                <input type="date" class="form-control" id="tgl_daftar" name="tgl_daftar"
+                                    value="{{ date('Y-m-d') }}" readonly>
+                            </div>
+                            <div class="mb-3">
+                                <label for="nomor_rumah" class="form-label">Nomor Rumah</label>
+                                <input type="text" class="form-control" id="nomor_rumah" name="nomor_rumah">
+                            </div>
+                            <div class="mb-3">
+                                <label for="kecamatan" class="form-label">Kecamatan</label>
+                                <input type="text" class="form-control" id="kecamatan" name="kecamatan" readonly>
+                            </div>
+                            <div class="mb-3">
+                                <label for="kelurahan" class="form-label">Kelurahan</label>
+                                <input type="text" class="form-control" id="kelurahan" name="kelurahan" readonly>
+                            </div>
+                            <div class="mb-3">
+                                <label for="latitude" class="form-label">Latitude</label>
+                                <input type="text" name="latitude" id="latitude" readonly class="form-control"
+                                    value="{{ old('latitude', $data->latitude ?? '') }}">
+                            </div>
 
-                                <div class="mb-3">
-                                    <label for="longitude" class="form-label">Longitude</label>
-                                    <input type="text" name="longitude" id="longitude" readonly class="form-control"
-                                        value="{{ old('longitude', $data->longitude ?? '') }}">
-                                </div>
+                            <div class="mb-3">
+                                <label for="longitude" class="form-label">Longitude</label>
+                                <input type="text" name="longitude" id="longitude" readonly class="form-control"
+                                    value="{{ old('longitude', $data->longitude ?? '') }}">
+                            </div>
 
-                                <div class="mb-3">
-                                    <label class="form-label">Pilih Lokasi</label>
-                                    <div id="map" style="height: 400px; border-radius: 8px;"></div>
-                                </div>
-                                <button class="btn btn-secondary" type="button"
-                                    onclick="prevTab('data-pemohon-tab')">Sebelumnya</button>
-                                <button class="btn btn-primary" type="button"
-                                    onclick="nextTab('dokumen-tab')">Lanjut</button>
+                            <div class="mb-3">
+                                <label class="form-label">Pilih Lokasi</label>
+                                <div id="map" style="height: 400px; border-radius: 8px;"></div>
+                            </div>
+                            <button class="btn btn-secondary" type="button"
+                                onclick="prevTab('data-pemohon-tab')">Sebelumnya</button>
+                            <button class="btn btn-primary" type="button" onclick="nextTab('dokumen-tab')">Lanjut</button>
                         </div>
                         <div class="tab-pane fade" id="dokumen" role="tabpanel" aria-labelledby="dokumen-tab">
                             <!-- Kebutuhan Dokumen Content -->
@@ -175,15 +174,16 @@
                                     <input type="file" class="form-control" id="{{ $item->slug }}" name="{{ $item->slug }}">
                                 </div>
                             @endforeach
-                                <button class="btn btn-secondary" type="button"
-                                    onclick="prevTab('lokasi-tab')">Sebelumnya</button>
-                                <button class="btn btn-primary" type="button"
-                                    onclick="nextTab('konfirmasi-tab')">Lanjut</button>
+                            <button class="btn btn-secondary" type="button"
+                                onclick="prevTab('lokasi-tab')">Sebelumnya</button>
+                            <button class="btn btn-primary" type="button"
+                                onclick="nextTab('konfirmasi-tab')">Lanjut</button>
                         </div>
                         <div class="tab-pane fade" id="konfirmasi" role="tabpanel" aria-labelledby="konfirmasi-tab">
                             <!-- Konfirmasi Content -->
                             <h5>Konfirmasi Permohonan</h5>
-                            <p>Bersedia membayar biaya Sambungan / Rekening Air Minum di Kantor PERUMDAM LAWU TIRTA Kab. Magetan.</p>
+                            <p>Bersedia membayar biaya Sambungan / Rekening Air Minum di Kantor PERUMDAM LAWU TIRTA Kab.
+                                Magetan.</p>
                             <div class="mb-3">
                                 <label for="konfirmasi" class="form-label">Ya, saya bersedia</label>
                                 <input type="checkbox" class="form-check-input" id="konfirmasi" name="konfirmasi">
@@ -274,24 +274,45 @@
 
                 const address = data.address;
 
-                document.getElementById('kelurahan').value =
-                    address.village ||
-                    address.suburb ||
-                    address.hamlet ||
-                    address.neighbourhood ||
-                    '';
-
-                document.getElementById('kecamatan').value =
-                    address.village ||
-                    address.municipality ||
-                    address.subdistrict ||
-                    address.city_district ||
-                    address.county ||
-                    '';
+                getKelurahan(address.village);                                
 
             } catch (err) {
                 console.error(err);
             }
+        }
+    </script>
+
+    <script>
+        function getKelurahan(parr) {
+            $.ajax({
+                url: "{{ route('get-kelurahan', ['parr' => ':parr']) }}".replace(':parr', parr),
+                type: "GET",
+                dataType: 'json',
+                success: function (response) {
+                    console.log(response);
+                    document.getElementById('kelurahan').value = response.data.name;
+
+                    getKecamatan(response.data.code);
+                },
+                error: function (xhr, status, error) {
+                    toastr.error('Diluar Kabupaten Magetan');
+                }
+            });
+        }
+
+        function getKecamatan(parr) {
+            $.ajax({
+                url: "{{ route('get-kecamatan', ['parr' => ':parr']) }}".replace(':parr', parr),
+                type: "GET",
+                dataType: 'json',
+                success: function (response) {
+                    console.log(response);
+                    document.getElementById('kecamatan').value = response.data.name;
+                },
+                error: function (xhr, status, error) {
+                    toastr.error('Diluar Kabupaten Magetan');
+                }
+            });
         }
     </script>
 
@@ -306,7 +327,7 @@
             if (el) el.click();
         }
 
-        $('#permohonan-form').submit(function(e) {
+        $('#permohonan-form').submit(function (e) {
             e.preventDefault();
             const formData = new FormData(this);
             $('#permohonan-form button[type="submit"]').prop('disabled', true).text('Menyimpan...');
@@ -320,13 +341,13 @@
                 dataType: 'json',
                 processData: false,
                 contentType: false,
-                success: function(response) {
+                success: function (response) {
                     console.log(response);
                     toastr.success(response.message);
                     $('#permohonan-form button[type="submit"]').prop('disabled', false).text('Kirim Permohonan');
                     location.href = "{{ route('dashboard') }}";
                 },
-                error: function(xhr, status, error) {
+                error: function (xhr, status, error) {
                     console.error(xhr.responseJSON.message);
                     toastr.error(xhr.responseJSON.message);
                     $('#permohonan-form button[type="submit"]').prop('disabled', false).text('Kirim Permohonan');
