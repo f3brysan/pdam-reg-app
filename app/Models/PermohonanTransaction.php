@@ -40,4 +40,9 @@ class PermohonanTransaction extends Model
     {
         return $this->hasOne(PermohonanBiling::class, 'id', 'id');
     }
+
+    public function permohonanOfficer()
+    {
+        return $this->hasOne(PermohonanOfficer::class, 'id', 'id');
+    }
 }

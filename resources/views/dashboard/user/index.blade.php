@@ -43,6 +43,8 @@
                                             <span class="fw-semibold mb-2">Pemasangan</span>
                                             @if(isset($permohonanTransactions) && ($permohonanTransactions->status == 'PEMASANGAN' || $permohonanTransactions->status == 'SELESAI'))
                                                 <i class="mdi mdi-check-circle text-success fs-2"></i>
+                                            @elseif(isset($permohonanTransactions) && $permohonanTransactions->status == 'TERJADWAL PEMASANGAN')
+                                                <i class="mdi mdi-timer-sand text-warning fs-2"></i>
                                             @else
                                                 <i class="mdi mdi-close-circle text-danger fs-2"></i>
                                             @endif
@@ -193,6 +195,52 @@
                         @endif
                     </div>
                 </div>
+            @endif
+
+            @if ($permohonanTransactions && $permohonanTransactions->permohonanOfficer)
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Informasi Pemasangan</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-md-6 mb-3">
+                            <div class="d-flex flex-column align-items-center shadow-sm p-3 rounded bg-light h-100">
+                                <i class="mdi mdi-account-hard-hat fs-2 text-primary mb-2"></i>
+                                <span class="fw-semibold">Petugas Pemasangan</span>
+                                <h6 class="mb-0 mt-1">{{ optional($permohonanTransactions->permohonanOfficer->petugas)->name ?? '-' }}</h6>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="d-flex flex-column align-items-center shadow-sm p-3 rounded bg-light h-100">
+                                <i class="mdi mdi-water fs-2 text-info mb-2"></i>
+                                <span class="fw-semibold">Jenis Meteran</span>
+                                <h6 class="mb-0 mt-1">{{ optional($permohonanTransactions->permohonanOfficer->msMeteran)->nama ?? '-' }}</h6>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="d-flex flex-column align-items-center shadow-sm p-3 rounded bg-light h-100">
+                                <i class="mdi mdi-numeric fs-2 text-success mb-2"></i>
+                                <span class="fw-semibold">Nomor Meteran</span>
+                                <h6 class="mb-0 mt-1">{{ $permohonanTransactions->permohonanOfficer->nomor_seri ?? '-' }}</h6>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="d-flex flex-column align-items-center shadow-sm p-3 rounded bg-light h-100">
+                                <i class="mdi mdi-calendar-check fs-2 text-warning mb-2"></i>
+                                <span class="fw-semibold">Tanggal Pasang</span>
+                                <h6 class="mb-0 mt-1">
+                                    @if($permohonanTransactions->permohonanOfficer->tgl_pasang)
+                                        {{ \Carbon\Carbon::parse($permohonanTransactions->permohonanOfficer->tgl_pasang)->locale('id')->translatedFormat('d F Y') }}
+                                    @else
+                                        -
+                                    @endif
+                                </h6>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
             @endif
         </div>
     </div>

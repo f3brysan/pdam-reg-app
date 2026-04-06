@@ -42,7 +42,7 @@ class DashboardController extends Controller
 
     public function userIndex()
     {
-        $permohonanTransactions = PermohonanTransaction::with('permohonanBiling')->where('id', Auth::user()->id)->first();
+        $permohonanTransactions = PermohonanTransaction::with('permohonanBiling', 'permohonanOfficer')->where('id', Auth::user()->id)->first();
 
         $dokumenPendukung = [];
         if ($permohonanTransactions) {
