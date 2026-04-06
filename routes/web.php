@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BerkasPDFController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MsJenisDokumenController;
 use App\Http\Controllers\MsJenisMeteranController;
@@ -81,4 +82,6 @@ route::group(['middleware' => 'auth'], function () {
             route::post('/{id}/delete', [UserController::class, 'destroy'])->name('users.delete');
         });
     });
+
+    route::get('/pdf/permohonan/{id}', [BerkasPDFController::class, 'pdfPermohonan'])->name('pdf.permohonan');
 });

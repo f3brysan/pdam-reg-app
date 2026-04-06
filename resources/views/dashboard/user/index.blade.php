@@ -92,6 +92,18 @@
                                                 <span class="badge bg-warning text-dark">Belum Lunas</span>
                                             @endif
                                         </li>
+                                        @if($permohonanTransactions->no_register != null)
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            <span><i class="mdi mdi-file-outline me-2"></i>No. Pelanggan</span>
+                                            <span class="fw-semibold">{{ $permohonanTransactions->no_pelanggan }}</span>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            <span><i class="mdi mdi-file-outline me-2"></i>Bukti Pendaftaran</span>
+                                            <a href="{{ route('pdf.permohonan', Crypt::encrypt($permohonanTransactions->id)) }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                                <i class="mdi mdi-eye"></i> Lihat
+                                            </a>
+                                        </li>
+                                        @endif
                                     </ul>
                                 </div>
 
