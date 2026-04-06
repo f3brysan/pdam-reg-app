@@ -144,6 +144,8 @@
                             <div class="col-6 text-center">
                                 <h6 class="fw-semibold my-3">Nomor VA</h6>
                                 <span class="fw-semibold">{{ $permohonanTransactions->permohonanBiling->no_va ?? '-' }}</span>
+                                <h6 class="fw-semibold my-3">Nominal Pembayaran</h6>
+                                <span class="fw-semibold">Rp. {{ number_format($permohonanTransactions->permohonanBiling->price, 0, ',', '.') ?? '-' }}</span>
                             </div>
                             <div class="col-6 text-center">
                                 <h6 class="fw-semibold my-3">Cara Pembayaran</h6>
@@ -168,6 +170,7 @@
                                 </div>
                             </div>
                         @endif
+                        @if(! empty($permohonanTransactions->permohonanBiling) && $permohonanTransactions->permohonanBiling->is_valid == false)
                         <div class="row mb-3">
                             <form id="form-upload-bukti-pembayaran" enctype="multipart/form-data">
                                 @csrf
@@ -187,6 +190,7 @@
                                 </div>
                             </form>
                         </div>
+                        @endif
                     </div>
                 </div>
             @endif

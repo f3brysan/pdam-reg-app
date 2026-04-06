@@ -158,7 +158,7 @@ class PermohonanController extends Controller
             ->where('id', $id)
             ->first();
 
-        $permohonanBiling = PermohonanBiling::where('id', $id)->first();
+        $permohonanBiling = PermohonanBiling::with('validBy')->where('id', $id)->first();
 
         $permohonanDokumen = PermohonanDokumenTransaction::with(['msJenisDokumen'])
             ->where('permohonan_transaction_id', $id)
@@ -216,10 +216,10 @@ class PermohonanController extends Controller
         }
     }
 
-    public function uploadBuktiPembayaran(Request $request, $id)
+    public function uploadBuktiPembayaran(Request $request)
     {
         try {
-            $id = Crypt::decryptString($id);
+            $id = $request->permohonan_transaction_id;
 
             $validate = Validator::make($request->all(), [
                 'bukti_pembayaran' => 'required|mimes:jpeg,png,jpg,gif,svg,pdf|max:2048',
@@ -280,6 +280,9 @@ class PermohonanController extends Controller
             DB::beginTransaction();
             $updateBilling = PermohonanBiling::where('id', $id)->update([
                 'is_valid' => true,
+                'valid_at' => now(),
+                'valid_by' => auth()->user()->id,
+                'updated_at' => now(),
             ]);
 
             $updateStatus = PermohonanTransaction::where('id', $id)->update([

@@ -98,7 +98,7 @@
             </div>
 
             @if (! empty($permohonanBiling))
-                <div class="card">
+                <div class="card mb-4">
                     <div class="card-header">
                         <h5 class="card-title mb-0">Bukti Pembayaran</h5>
                     </div>
@@ -111,13 +111,30 @@
                                 class="btn btn-sm btn-outline-primary">Lihat</a>
 
                             <div class="d-flex justify-content-end align-items-center">
-                                <button class="btn btn-sm btn-success ms-2" id="btn-verifikasi-pembayaran">Verifikasi
-                                    Pembayaran</button>
+                                @if($permohonanBiling->is_valid == false)
+                                    <button class="btn btn-sm btn-success" id="btn-verifikasi-pembayaran">
+                                        <i class="fa fa-check"></i> Verifikasi Pembayaran
+                                    </button>
+                                @else
+                                <p class="small">Pembayaran sudah divalidasi <br> Pada : {{ \Carbon\Carbon::parse($permohonanBiling->valid_at)->locale('id')->translatedFormat('d F Y H:i:s') }}
+                                <br> Diverifikasi oleh : {{ optional($permohonanBiling->validBy)->name }}
+                                </p>
+                                @endif
                             </div>
                         @else
                             <h6 class="text-danger">Bukti Pembayaran belum diupload</h6>
                         @endif
                     </div>
+                </div>
+            @endif
+
+            @if(! empty($permohonanBiling) && $permohonanBiling->is_valid == true)
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Set Petugas Pemasangan</h5>
+                    </div>
+                    <div class="card-body">
+                    </div>  
                 </div>
             @endif
         </div>
