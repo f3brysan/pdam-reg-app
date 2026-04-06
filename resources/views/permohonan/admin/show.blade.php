@@ -4,6 +4,7 @@
 
 @push('styles')
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <style>
         #detail-map {
             height: 350px;
@@ -134,6 +135,17 @@
                         <h5 class="card-title mb-0">Set Petugas Pemasangan</h5>
                     </div>
                     <div class="card-body">
+                        @if(! empty($permohonanOfficer))
+                            <p> Petugas pemasangan : {{ optional($permohonanOfficer->petugas)->name }}
+                            <br> Jenis meteran : {{ optional($permohonanOfficer->msMeteran)->nama }}
+                            <br> Nomor meteran : {{ $permohonanOfficer->nomor_seri }}
+                            <br> Tanggal pasang : {{ \Carbon\Carbon::parse($permohonanOfficer->tgl_pasang)->locale('id')->translatedFormat('d F Y') }}
+                            </p>
+                        @else
+                            <button class="btn btn-sm btn-success" id="btn-set-petugas-pemasangan">
+                                <i class="fa fa-check"></i> Set Petugas Pemasangan
+                            </button>
+                        @endif
                     </div>  
                 </div>
             @endif
@@ -210,11 +222,58 @@
             </form>
         </div>
     </div>
+
+    <div class="modal fade" id="modalSetPetugasPemasangan" tabindex="-1" aria-labelledby="modalSetPetugasPemasanganLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <form id="form-set-petugas-pemasangan">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalSetPetugasPemasanganLabel">Set Petugas Pemasangan</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label">Petugas</label>
+                            <select class="form-select select2-modal" id="petugas-id" name="petugas_id" required>
+                                <option value="">Pilih Petugas</option>
+                                @foreach ($officers as $officer)
+                                    <option value="{{ $officer->id }}">{{ $officer->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Jenis Meteran</label>
+                            <select class="form-select select2-modal" id="ms-meteran-id" name="ms_meteran_id" required>
+                                <option value="">Pilih Jenis Meteran</option>
+                                @foreach ($msMeteran as $meteran)
+                                    <option value="{{ $meteran->id }}">{{ $meteran->nama }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Tanggal Pasang</label>
+                            <input type="date" class="form-control" id="tgl-pasang" name="tgl_pasang" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Nomor Meteran</label>
+                            <input type="text" class="form-control" id="nomor-seri" name="nomor_seri" placeholder="Masukkan nomor meteran" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-primary">Simpan</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
 @endsection
 
 @push('scripts')
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
 
@@ -247,6 +306,10 @@
     <script>
         $(document).ready(function () {
             $('#input-harga').mask('000.000.000.000', { reverse: true });
+            $('.select2-modal').select2({
+                dropdownParent: $('#modalSetPetugasPemasangan'),
+                width: '100%'
+            });
         });
 
         $('#btn-validasi-permohonan').click(function () {
@@ -347,6 +410,43 @@
                             });
                         }
                     });
+                }
+            });
+        });
+
+        $('#btn-set-petugas-pemasangan').click(function () {
+            $('#modalSetPetugasPemasangan').modal('show');
+        });
+
+        $('#form-set-petugas-pemasangan').submit(function (e) {
+            e.preventDefault();
+
+            $.ajax({
+                url: "{{ route('permohonan.set-petugas-pemasangan', Crypt::encryptString($permohonan->id)) }}",
+                type: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    petugas_id: $('#petugas-id').val(),
+                    ms_meteran_id: $('#ms-meteran-id').val(),
+                    tgl_pasang: $('#tgl-pasang').val(),
+                    nomor_seri: $('#nomor-seri').val(),
+                },
+                success: function (response) {
+                    $('#modalSetPetugasPemasangan').modal('hide');
+                    Swal.fire({
+                        title: 'Success',
+                        text: response.message,
+                        icon: 'success',
+                    }).then(function () {
+                        location.reload();
+                    });
+                },
+                error: function (xhr) {
+                    let message = 'Terjadi kesalahan saat menyimpan data';
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        message = xhr.responseJSON.message;
+                    }
+                    toastr.error(message);
                 }
             });
         });

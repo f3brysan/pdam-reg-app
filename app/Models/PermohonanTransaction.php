@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class PermohonanTransaction extends Model
 {
     protected $table = 'permohonan_transactions';
-    protected $fillable = ['id', 'no_register', 'tgl_daftar', 'nik', 'nama', 'telepon', 'alamat', 'ms_pekerjaan_id', 'jumlah_keluarga', 'ms_jenis_tempat_tinggal_id', 'kecamatan', 'kelurahan', 'longitude', 'latitude', 'jumlah_kran', 'sedia_bayar', 'no_pelanggan', 'petugas_id', 'tgl_register', 'tgl_pasang', 'ms_meteran_id', 'no_seri_meteran', 'status'];
+    protected $fillable = ['id', 'no_register', 'tgl_daftar', 'nik', 'nama', 'telepon', 'alamat', 'ms_pekerjaan_id', 'jumlah_keluarga', 'ms_jenis_tempat_tinggal_id', 'kecamatan', 'kelurahan', 'longitude', 'latitude', 'jumlah_kran', 'sedia_bayar', 'no_pelanggan', 'status'];
     protected $primaryKey = 'id';
     public $timestamps = true;
 

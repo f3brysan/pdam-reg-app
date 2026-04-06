@@ -4,10 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\MsJenisDokumen;
 use App\Models\MsJenisTempatTinggal;
+use App\Models\MsMeteran;
 use App\Models\MsPekerjaan;
 use App\Models\PermohonanBiling;
 use App\Models\PermohonanDokumenTransaction;
+use App\Models\PermohonanOfficer;
 use App\Models\PermohonanTransaction;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
@@ -160,11 +163,17 @@ class PermohonanController extends Controller
 
         $permohonanBiling = PermohonanBiling::with('validBy')->where('id', $id)->first();
 
+        $permohonanOfficer = PermohonanOfficer::with('petugas')->where('id', $id)->first();
+
+        $officers = User::role('teknisi')->select('id', 'name')->get();
+
+        $msMeteran = MsMeteran::select('id', 'nama')->get();
+
         $permohonanDokumen = PermohonanDokumenTransaction::with(['msJenisDokumen'])
             ->where('permohonan_transaction_id', $id)
             ->get();
 
-        return view('permohonan.admin.show', compact('permohonan', 'permohonanDokumen', 'permohonanBiling'));
+        return view('permohonan.admin.show', compact('permohonan', 'permohonanDokumen', 'permohonanBiling', 'permohonanOfficer', 'officers', 'msMeteran'));
     }
 
     public function validasi(Request $request, $id)
@@ -300,6 +309,78 @@ class PermohonanController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => $th->getMessage()
+            ], 500);
+        }
+    }
+
+    public function setPetugasPemasangan(Request $request, $id)
+    {
+        try {
+            $id = Crypt::decryptString($id);
+
+            $validate = Validator::make($request->all(), [
+                'petugas_id' => 'required|exists:users,id',
+                'ms_meteran_id' => 'required|exists:ms_meterans,id',
+                'tgl_pasang' => 'required|date',
+                'nomor_seri' => 'required|string|max:100',
+            ]);
+
+            if ($validate->fails()) {
+                return response()->json([
+                    'success' => false,
+                    'error_type' => 'validation_error',
+                    'field' => $validate->errors()->keys()[0] ?? null,
+                    'message' => $validate->errors()->first(),
+                    'all_errors' => $validate->errors(),
+                ], 422);
+            }
+
+            $checkPermohonan = PermohonanTransaction::where('id', $id)->first();
+            if (! $checkPermohonan) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Data permohonan tidak ditemukan',
+                ], 404);
+            }
+
+            if (PermohonanOfficer::where('id', $id)->exists()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Petugas pemasangan sudah ditetapkan',
+                ], 422);
+            }
+
+            DB::beginTransaction();
+
+            $permohonanOfficer = PermohonanOfficer::create([
+                'id' => $id,
+                'petugas_id' => $request->petugas_id,
+                'tgl_pasang' => $request->tgl_pasang,
+                'ms_meteran_id' => $request->ms_meteran_id,
+                'nomor_seri' => $request->nomor_seri,
+                'is_done' => false,
+                'created_by' => auth()->id(),
+            ]);
+
+            $NoPelanggan = 'JI-'.strtotime(now());
+
+            PermohonanTransaction::where('id', $id)->update([   
+                'no_pelanggan' => $NoPelanggan,
+                'status' => 'TERJADWAL PEMASANGAN',
+            ]);
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Petugas pemasangan berhasil ditetapkan',
+                'data' => $permohonanOfficer,
+            ], 200);
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => $th->getMessage(),
             ], 500);
         }
     }
