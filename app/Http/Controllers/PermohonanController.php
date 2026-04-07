@@ -6,12 +6,14 @@ use App\Models\MsJenisDokumen;
 use App\Models\MsJenisTempatTinggal;
 use App\Models\MsMeteran;
 use App\Models\MsPekerjaan;
+use App\Models\OfficerDocument;
 use App\Models\PermohonanBiling;
 use App\Models\PermohonanDokumenTransaction;
 use App\Models\PermohonanOfficer;
 use App\Models\PermohonanTransaction;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -156,7 +158,8 @@ class PermohonanController extends Controller
 
     public function show($id)
     {
-        $id = Crypt::decryptString($id);
+        $id = Crypt::decrypt($id);
+        
         $permohonan = PermohonanTransaction::with(['msPekerjaan', 'msJenisTempatTinggal'])
             ->where('id', $id)
             ->first();
@@ -172,6 +175,11 @@ class PermohonanController extends Controller
         $permohonanDokumen = PermohonanDokumenTransaction::with(['msJenisDokumen'])
             ->where('permohonan_transaction_id', $id)
             ->get();
+
+        if (Auth::user()->roles->first()->name == 'teknisi') {
+            $officerDocuments = OfficerDocument::where('permohonan_transaction_id', $id)->where('petugas_id', auth()->user()->id)->get();
+            return view('permohonan.teknisi.show', compact('permohonan', 'permohonanDokumen', 'permohonanBiling', 'permohonanOfficer', 'officers', 'msMeteran', 'officerDocuments'));
+        }
 
         return view('permohonan.admin.show', compact('permohonan', 'permohonanDokumen', 'permohonanBiling', 'permohonanOfficer', 'officers', 'msMeteran'));
     }
@@ -378,6 +386,106 @@ class PermohonanController extends Controller
             ], 200);
         } catch (\Throwable $th) {
             DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => $th->getMessage(),
+            ], 500);
+        }
+    }   
+
+    public function uploadDokumenTeknisi(Request $request, $id)
+    {
+        try {
+            $id = Crypt::decrypt($id);
+            $permohonan = PermohonanTransaction::where('id', $id)->first();
+            if (! $permohonan) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Data permohonan tidak ditemukan',
+                ], 404);
+            }
+
+            
+            if($request->hasFile('images')) {
+                foreach ($request->file('images') as $image) {                    
+                    $file = $image->store('uploads/dokumen_teknisi', 'public');                    
+                    
+                    $officerDocument = OfficerDocument::create([
+                        'permohonan_transaction_id' => $permohonan->id,
+                        'petugas_id' => auth()->user()->id,                        
+                        'path' => $file,                                                
+                    ]);
+                }
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Dokumen berhasil diunggah',
+                'data' => $officerDocument,
+            ], 200);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'success' => false,
+                'message' => $th->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function deleteDokumenTeknisi(Request $request, $id)
+    {
+        try {
+            $id = Crypt::decrypt($id);
+            $officerDocument = OfficerDocument::where('id', $id)->first();
+            if (! $officerDocument) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Data dokumen tidak ditemukan',
+                ], 404);
+            }
+            $officerDocument->delete();
+            return response()->json([
+                'success' => true,
+                'message' => 'Dokumen berhasil dihapus',
+            ], 200);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'success' => false,
+                'message' => $th->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function laporkanHasilPemasangan(Request $request, $id)
+    {
+        try {
+            $id = Crypt::decrypt($id);
+            $permohonan = PermohonanTransaction::where('id', $id)->first();
+            if (! $permohonan) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Data permohonan tidak ditemukan',
+                ], 404);
+            }
+
+            DB::beginTransaction();
+            $updateStatus = PermohonanTransaction::where('id', $id)->update([
+                'status' => 'PEMASANGAN SELESAI',
+            ]);
+
+            $updateOfficer = PermohonanOfficer::where('id', $id)->update([
+                'is_done' => true,
+                'done_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Hasil pemasangan berhasil dilaporkan',
+                'data' => $updateStatus,
+            ], 200);
+        } catch (\Throwable $th) {
             return response()->json([
                 'success' => false,
                 'message' => $th->getMessage(),

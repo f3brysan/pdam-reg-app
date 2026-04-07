@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\PermohonanOfficer;
 use App\Models\PermohonanTransaction;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -18,6 +19,12 @@ class DashboardController extends Controller
                 break;
             case 'user':
                 return $this->userIndex();
+                break;
+            case 'teknisi':
+                return $this->teknisiIndex();
+                break;
+            case 'pimpinan':
+                return $this->pimpinanIndex();
                 break;
         }
     }
@@ -53,5 +60,42 @@ class DashboardController extends Controller
         }
 
         return view('dashboard.user.index', compact('permohonanTransactions', 'dokumenPendukung'));
+    }
+
+    public function teknisiIndex()
+    {
+        $teknisiId = Auth::id();
+
+        $baseQuery = PermohonanOfficer::with(['permohonanTransaction', 'msMeteran'])
+            ->where('petugas_id', $teknisiId);
+
+        $totalPemasangan = (clone $baseQuery)->count();
+        $totalSelesai = (clone $baseQuery)->where('is_done', true)->count();
+        $totalAntrian = (clone $baseQuery)->where('is_done', false)->count();
+        $jadwalHariIni = (clone $baseQuery)->whereDate('tgl_pasang', now()->toDateString())->count();
+        $jadwalTerdekat = (clone $baseQuery)
+            ->where('is_done', false)
+            ->whereDate('tgl_pasang', '>=', now()->toDateString())
+            ->orderBy('tgl_pasang', 'asc')
+            ->first();
+
+        $daftarPemasangan = (clone $baseQuery)
+            ->orderByRaw('CASE WHEN is_done = 0 THEN 0 ELSE 1 END')
+            ->orderBy('tgl_pasang', 'asc')
+            ->get();
+
+        return view('dashboard.teknisi.index', compact(
+            'totalPemasangan',
+            'totalSelesai',
+            'totalAntrian',
+            'jadwalHariIni',
+            'jadwalTerdekat',
+            'daftarPemasangan'
+        ));
+    }
+
+    public function pimpinanIndex()
+    {
+        return view('dashboard.pimpinan.index');
     }
 }

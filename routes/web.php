@@ -36,13 +36,18 @@ route::group(['middleware' => 'auth'], function () {
             route::post('/store', [PermohonanController::class, 'store'])->name('permohonan.store');
         });
         
-        route::group(['middleware' => ['role:admin']], function () {
+        route::group(['middleware' => ['role:admin|teknisi']], function () {
             route::get('/', [PermohonanController::class, 'index'])->name('permohonan.index');
             route::get('/{id}', [PermohonanController::class, 'show'])->name('permohonan.show');
             route::post('/{id}/validasi', [PermohonanController::class, 'validasi'])->name('permohonan.validasi');
             route::post('/{id}/verifikasi-pembayaran', [PermohonanController::class, 'verifikasiPembayaran'])->name('permohonan.verifikasi-pembayaran');
             route::post('/{id}/set-petugas-pemasangan', [PermohonanController::class, 'setPetugasPemasangan'])->name('permohonan.set-petugas-pemasangan');
-            route::post('/{id}/delete', [PermohonanController::class, 'destroy'])->name('permohonan.delete');
+            route::post('/{id}/delete', [PermohonanController::class, 'destroy'])->name('permohonan.delete');      
+            
+            route::post('/{id}/upload-dokumen-teknisi', [PermohonanController::class, 'uploadDokumenTeknisi'])->name('permohonan.upload-dokumen-teknisi');
+            route::delete('/{id}/delete-dokumen-teknisi', [PermohonanController::class, 'deleteDokumenTeknisi'])->name('permohonan.delete-dokumen-teknisi');
+
+            route::post('/{id}/laporkan-hasil-pemasangan', [PermohonanController::class, 'laporkanHasilPemasangan'])->name('permohonan.laporkan-hasil-pemasangan');
         });
     });
 
