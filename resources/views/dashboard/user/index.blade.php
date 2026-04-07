@@ -114,6 +114,15 @@
                                                 </a>
                                             </li>
                                         @endif
+                                        @if ($permohonanTransactions->status == 'SELESAI')
+                                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                <span><i class="mdi mdi-file-outline me-2"></i>Berita Acara</span>
+                                                <a href="{{ route('pdf.berita-acara', Crypt::encrypt($permohonanTransactions->id)) }}"
+                                                    target="_blank" class="btn btn-sm btn-outline-primary">
+                                                    <i class="mdi mdi-eye"></i> Lihat
+                                                </a>
+                                            </li>
+                                        @endif
                                     </ul>
                                 </div>
 

@@ -32,7 +32,7 @@ route::group(['middleware' => 'auth'], function () {
     route::prefix('permohonan')->group(function () {
 
         route::post('/konfirmasi-hasil-pemasangan', [PermohonanController::class, 'konfirmasiHasilPemasangan'])->name('permohonan.konfirmasi-hasil-pemasangan');
-        
+
         route::group(['middleware' => ['role:user']], function () {
             route::post('/upload-bukti-pembayaran', [PermohonanController::class, 'uploadBuktiPembayaran'])->name('permohonan.upload-bukti-pembayaran');
             route::get('/create', [PermohonanController::class, 'create'])->name('permohonan.create');
@@ -92,4 +92,5 @@ route::group(['middleware' => 'auth'], function () {
     });
 
     route::get('/pdf/permohonan/{id}', [BerkasPDFController::class, 'pdfPermohonan'])->name('pdf.permohonan');
+    route::get('/pdf/berita-acara/{id}', [BerkasPDFController::class, 'pdfBeritaAcara'])->name('pdf.berita-acara');
 });
