@@ -30,6 +30,9 @@ route::group(['middleware' => 'auth'], function () {
     route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     route::prefix('permohonan')->group(function () {
+
+        route::post('/konfirmasi-hasil-pemasangan', [PermohonanController::class, 'konfirmasiHasilPemasangan'])->name('permohonan.konfirmasi-hasil-pemasangan');
+        
         route::group(['middleware' => ['role:user']], function () {
             route::post('/upload-bukti-pembayaran', [PermohonanController::class, 'uploadBuktiPembayaran'])->name('permohonan.upload-bukti-pembayaran');
             route::get('/create', [PermohonanController::class, 'create'])->name('permohonan.create');

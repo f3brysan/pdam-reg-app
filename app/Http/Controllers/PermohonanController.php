@@ -492,4 +492,33 @@ class PermohonanController extends Controller
             ], 500);
         }
     }
+
+    public function konfirmasiHasilPemasangan(Request $request)
+    {
+        try {
+            $id = Crypt::decrypt($request->permohonan_transaction_id);
+            $permohonan = PermohonanTransaction::where('id', $id)->first();
+            if (! $permohonan) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Data permohonan tidak ditemukan',
+                ], 404);
+            }
+            
+            $update = PermohonanTransaction::where('id', $id)->update([
+                'status' => 'SELESAI',
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Hasil pemasangan berhasil dikonfirmasi',
+                'data' => $update,
+            ], 200);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'success' => false,
+                'message' => $th->getMessage(),
+            ], 500);
+        }
+    }
 }
