@@ -1,6 +1,6 @@
 @extends('layouts.main')
 
-@section('title', 'Detail Permohonan')
+@section('title', 'Detail permohonan')
 
 @push('styles')
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
@@ -17,7 +17,7 @@
 @section('content')
     <div class="row mb-4">
         <div class="col-12 d-flex justify-content-between align-items-center">
-            <h4 class="mb-0">Detail Permohonan</h4>
+            <h4 class="mb-0">Detail permohonan</h4>
             <a href="{{ route('permohonan.index') }}" class="btn btn-secondary btn-sm">Kembali</a>
         </div>
     </div>
@@ -26,7 +26,7 @@
         <div class="col-lg-8">
             <div class="card mb-4">
                 <div class="card-header">
-                    <h5 class="card-title mb-0">Informasi Permohonan</h5>
+                    <h5 class="card-title mb-0">Informasi permohonan</h5>
                 </div>
                 <div class="card-body">
                     @if (!$permohonan)
@@ -34,11 +34,11 @@
                     @else
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label class="form-label fw-semibold">No Register</label>
+                                <label class="form-label fw-semibold">Nomor registrasi</label>
                                 <p class="mb-0">{{ $permohonan->no_register }}</p>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label class="form-label fw-semibold">Tanggal Daftar</label>
+                                <label class="form-label fw-semibold">Tanggal daftar</label>
                                 <p class="mb-0">
                                     {{ \Carbon\Carbon::parse($permohonan->tgl_daftar)->locale('id')->translatedFormat('d F Y') }}
                                 </p>
@@ -64,7 +64,7 @@
                                 <p class="mb-0">{{ optional($permohonan->msPekerjaan)->nama }}</p>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label class="form-label fw-semibold">Jenis Tempat Tinggal</label>
+                                <label class="form-label fw-semibold">Jenis tempat tinggal</label>
                                 <p class="mb-0">{{ optional($permohonan->msJenisTempatTinggal)->nama }}</p>
                             </div>
                             <div class="col-md-12 mb-3">
@@ -72,7 +72,7 @@
                                 <p class="mb-0">{{ $permohonan->alamat }}</p>
                             </div>
                             <div class="col-md-4 mb-3">
-                                <label class="form-label fw-semibold">Nomor Rumah</label>
+                                <label class="form-label fw-semibold">Nomor rumah</label>
                                 <p class="mb-0">{{ $permohonan->nomor_rumah }}</p>
                             </div>
                             <div class="col-md-4 mb-3">
@@ -101,13 +101,13 @@
             @if (!empty($permohonanBiling))
                 <div class="card mb-4">
                     <div class="card-header">
-                        <h5 class="card-title mb-0">Bukti Pembayaran</h5>
+                        <h5 class="card-title mb-0">Bukti pembayaran</h5>
                     </div>
                     <div class="card-body">
-                        <h6>Nomor VA : {{ $permohonanBiling->no_va }}</h6>
-                        <h6>Harga : Rp. {{ number_format($permohonanBiling->price, 0, ',', '.') }}</h6>
+                        <h6>Nomor VA: {{ $permohonanBiling->no_va }}</h6>
+                        <h6>Jumlah tagihan: Rp {{ number_format($permohonanBiling->price, 0, ',', '.') }}</h6>
                         @if ($permohonanBiling->path)
-                            <h6>Bukti Pembayaran</h6>
+                            <h6>File bukti pembayaran</h6>
                             <a href="{{ asset('storage/' . $permohonanBiling->path) }}" target="_blank"
                                 class="btn btn-sm btn-outline-primary">Lihat</a>
 
@@ -117,14 +117,14 @@
                                         <i class="fa fa-check"></i> Verifikasi Pembayaran
                                     </button>
                                 @else
-                                    <p class="small">Pembayaran sudah divalidasi <br> Pada :
+                                    <p class="small">Pembayaran sudah diverifikasi<br>Pada:
                                         {{ \Carbon\Carbon::parse($permohonanBiling->valid_at)->locale('id')->translatedFormat('d F Y H:i:s') }}
-                                        <br> Diverifikasi oleh : {{ optional($permohonanBiling->validBy)->name }}
+                                        <br>Diverifikasi oleh: {{ optional($permohonanBiling->validBy)->name }}
                                     </p>
                                 @endif
                             </div>
                         @else
-                            <h6 class="text-danger">Bukti Pembayaran belum diupload</h6>
+                            <h6 class="text-danger">Bukti pembayaran belum diunggah</h6>
                         @endif
                     </div>
                 </div>
@@ -133,23 +133,23 @@
             @if (!empty($permohonanBiling) && $permohonanBiling->is_valid == true)
                 <div class="card mb-4">
                     <div class="card-header">
-                        <h5 class="card-title mb-0">Set Petugas Pemasangan</h5>
+                        <h5 class="card-title mb-0">Penetapan petugas pemasangan</h5>
                     </div>
                     <div class="card-body">
                         @if (!empty($permohonanOfficer))
-                            <p> Petugas pemasangan : {{ optional($permohonanOfficer->petugas)->name }}
-                                <br> Jenis meteran : {{ optional($permohonanOfficer->msMeteran)->nama }}
-                                <br> Nomor meteran : {{ $permohonanOfficer->nomor_seri }}
-                                <br> Tanggal pasang :
+                            <p>Petugas pemasangan: {{ optional($permohonanOfficer->petugas)->name }}
+                                <br>Jenis meteran: {{ optional($permohonanOfficer->msMeteran)->nama }}
+                                <br>Nomor meter: {{ $permohonanOfficer->nomor_seri }}
+                                <br>Tanggal pasang:
                                 {{ \Carbon\Carbon::parse($permohonanOfficer->tgl_pasang)->locale('id')->translatedFormat('d F Y') }}
                             </p>
 
                             @if ($permohonanOfficer->is_done == true)
                                 <div class="row">
                                     <div class="col-md-12">
-                                        <p> Hasil pemasangan : <span class="badge bg-success">Selesai</span>
+                                        <p>Hasil pemasangan: <span class="badge bg-success">Selesai</span>
                                             <br>
-                                            Tanggal pemasangan :
+                                            Tanggal pemasangan:
                                             {{ \Carbon\Carbon::parse($permohonanOfficer->done_at)->locale('id')->translatedFormat('d F Y H:i:s') }}
                                             WIB
                                         </p>
@@ -158,7 +158,7 @@
                             @endif
                         @else
                             <button class="btn btn-sm btn-success" id="btn-set-petugas-pemasangan">
-                                <i class="fa fa-check"></i> Set Petugas Pemasangan
+                                <i class="fa fa-check"></i> Tetapkan petugas pemasangan
                             </button>
                         @endif
                     </div>
@@ -168,12 +168,12 @@
             @if (!empty($permohonanOfficer) && $permohonanOfficer->is_done == true)
                 <div class="card">
                     <div class="card-header">
-                        <h5 class="card-title mb-0">Laporkan Hasil Pemasangan</h5>
+                        <h5 class="card-title mb-0">Laporan hasil pemasangan</h5>
                     </div>
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-12">
-                                <p> Dokumen terlampir : {{ $officerDocuments->count() }}</p>
+                                <p>Jumlah dokumen terlampir: {{ $officerDocuments->count() }}</p>
                             </div>
                         </div>
                         <div class="row">
@@ -183,7 +183,7 @@
                                         <table class="table table-bordered">
                                             <thead>
                                                 <tr>
-                                                    <th>No</th>
+                                                    <th>No.</th>
                                                     <th>Dokumen</th>                                                    
                                                 </tr>
                                             </thead>
@@ -216,7 +216,7 @@
         <div class="col-lg-4">
             <div class="card mb-4">
                 <div class="card-header">
-                    <h5 class="card-title mb-0">Dokumen Terlampir</h5>
+                    <h5 class="card-title mb-0">Dokumen terlampir</h5>
                 </div>
                 <div class="card-body">
                     @if ($permohonanDokumen->isEmpty())
@@ -237,16 +237,16 @@
 
             <div class="card">
                 <div class="card-header">
-                    <h5 class="card-title mb-0">Lokasi Pemasangan (Maps)</h5>
+                    <h5 class="card-title mb-0">Lokasi pemasangan (peta)</h5>
                 </div>
                 <div class="card-body">
                     <div class="row mb-3">
                         <div class="col-md-6 mb-0">
-                            <label class="form-label fw-semibold">Latitude</label>
+                            <label class="form-label fw-semibold">Lintang</label>
                             <p class="mb-0" id="latitude-value">{{ $permohonan->latitude }}</p>
                         </div>
                         <div class="col-md-6 mb-0">
-                            <label class="form-label fw-semibold">Longitude</label>
+                            <label class="form-label fw-semibold">Bujur</label>
                             <p class="mb-0" id="longitude-value">{{ $permohonan->longitude }}</p>
                         </div>
                     </div>
@@ -260,26 +260,26 @@
         </div>
     </div>
 
-    <!-- Modal Input Harga -->
+    <!-- Modal input nominal tagihan -->
     <div class="modal fade" id="modalInputHarga" tabindex="-1" aria-labelledby="modalInputHargaLabel"
         aria-hidden="true">
         <div class="modal-dialog">
             <form id="form-input-harga">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="modalInputHargaLabel">Input Harga Permohonan</h5>
+                        <h5 class="modal-title" id="modalInputHargaLabel">Masukkan nominal tagihan permohonan</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
                     </div>
                     <div class="modal-body">
                         <div class="mb-3">
-                            <label for="input-harga" class="form-label">Harga</label>
+                            <label for="input-harga" class="form-label">Nominal tagihan (Rp)</label>
                             <input type="text" class="form-control" id="input-harga" name="harga"
-                                placeholder="Masukkan harga pemasangan" required>
+                                placeholder="Masukkan nominal tagihan" required>
                         </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                        <button type="submit" class="btn btn-primary">Simpan Harga</button>
+                        <button type="submit" class="btn btn-primary">Simpan nominal</button>
                     </div>
                 </div>
             </form>
@@ -292,36 +292,36 @@
             <form id="form-set-petugas-pemasangan">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="modalSetPetugasPemasanganLabel">Set Petugas Pemasangan</h5>
+                        <h5 class="modal-title" id="modalSetPetugasPemasanganLabel">Tetapkan petugas pemasangan</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
                     </div>
                     <div class="modal-body">
                         <div class="mb-3">
                             <label class="form-label">Petugas</label>
                             <select class="form-select select2-modal" id="petugas-id" name="petugas_id" required>
-                                <option value="">Pilih Petugas</option>
+                                <option value="">Pilih petugas</option>
                                 @foreach ($officers as $officer)
                                     <option value="{{ $officer->id }}">{{ $officer->name }}</option>
                                 @endforeach
                             </select>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Jenis Meteran</label>
+                            <label class="form-label">Jenis meteran</label>
                             <select class="form-select select2-modal" id="ms-meteran-id" name="ms_meteran_id" required>
-                                <option value="">Pilih Jenis Meteran</option>
+                                <option value="">Pilih jenis meteran</option>
                                 @foreach ($msMeteran as $meteran)
                                     <option value="{{ $meteran->id }}">{{ $meteran->nama }}</option>
                                 @endforeach
                             </select>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Tanggal Pasang</label>
+                            <label class="form-label">Tanggal pasang</label>
                             <input type="date" class="form-control" id="tgl-pasang" name="tgl_pasang" required>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Nomor Meteran</label>
+                            <label class="form-label">Nomor meter</label>
                             <input type="text" class="form-control" id="nomor-seri" name="nomor_seri"
-                                placeholder="Masukkan nomor meteran" required>
+                                placeholder="Masukkan nomor meter" required>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -390,7 +390,7 @@
 
             let harga = $('#input-harga').val();
             if (!harga || harga < 0) {
-                Swal.fire('Error', 'Harga tidak valid', 'error');
+                Swal.fire('Kesalahan', 'Nominal tidak valid', 'error');
                 return;
             }
 
@@ -404,7 +404,7 @@
             }).then(function(result) {
                 if (result.isConfirmed) {
                     Swal.fire({
-                        title: 'Loading',
+                        title: 'Memuat',
                         text: 'Memproses validasi permohonan...',
                         icon: 'info',
                         showConfirmButton: false,
@@ -447,7 +447,7 @@
             }).then(function(result) {
                 if (result.isConfirmed) {
                     Swal.fire({
-                        title: 'Loading',
+                        title: 'Memuat',
                         text: 'Memproses verifikasi pembayaran...',
                         icon: 'info',
                         showConfirmButton: false,
@@ -462,7 +462,7 @@
                         },
                         success: function(response) {
                             Swal.fire({
-                                title: 'Success',
+                                title: 'Berhasil',
                                 text: 'Pembayaran berhasil diverifikasi',
                                 icon: 'success',
                             }).then(function() {
@@ -471,7 +471,7 @@
                         },
                         error: function(xhr, status, error) {
                             Swal.fire({
-                                title: 'Error',
+                                title: 'Gagal',
                                 text: 'Terjadi kesalahan saat verifikasi pembayaran',
                                 icon: 'error',
                             });
@@ -501,7 +501,7 @@
                 success: function(response) {
                     $('#modalSetPetugasPemasangan').modal('hide');
                     Swal.fire({
-                        title: 'Success',
+                        title: 'Berhasil',
                         text: response.message,
                         icon: 'success',
                     }).then(function() {

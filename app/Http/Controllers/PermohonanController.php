@@ -55,11 +55,23 @@ class PermohonanController extends Controller
                 'pekerjaan' => 'required',
                 'jumlah_kran' => 'required',
                 'tgl_daftar' => 'required',
-                'nomor_rumah' => 'required',
                 'kecamatan' => 'required',
                 'kelurahan' => 'required',
                 'latitude' => 'required',
                 'longitude' => 'required',
+            ], [
+                'nama.required' => 'Nama wajib diisi.',
+                'nik.required' => 'NIK wajib diisi.',
+                'alamat.required' => 'Alamat wajib diisi.',
+                'telepon.required' => 'Nomor telepon wajib diisi.',
+                'jenis_tempat_tinggal.required' => 'Jenis tempat tinggal wajib dipilih.',
+                'pekerjaan.required' => 'Pekerjaan wajib dipilih.',
+                'jumlah_kran.required' => 'Jumlah kran wajib diisi.',
+                'tgl_daftar.required' => 'Tanggal daftar wajib diisi.',
+                'kecamatan.required' => 'Kecamatan wajib dipilih.',
+                'kelurahan.required' => 'Kelurahan wajib dipilih.',
+                'latitude.required' => 'Titik lokasi pada peta (lintang) wajib ditentukan.',
+                'longitude.required' => 'Titik lokasi pada peta (bujur) wajib ditentukan.',
             ]);
 
             $msJenisDokumen = MsJenisDokumen::all();
@@ -69,7 +81,27 @@ class PermohonanController extends Controller
                 if (! $request->hasFile($slug)) {
                     return response()->json([
                         'success' => false,
-                        'message' => 'Anda harus mengupload dokumen '.$item->nama,
+                        'message' => 'Anda harus mengunggah dokumen '.$item->nama.'.',
+                        'error_type' => 'validation_error',
+                        'field' => $slug,
+                    ], 422);
+                }
+
+                $fileValidator = Validator::make(
+                    [$slug => $request->file($slug)],
+                    [$slug => ['file', 'mimes:jpeg,jpg,png,gif,webp,bmp,svg,pdf']],
+                    [
+                        $slug.'.file' => 'Berkas dokumen '.$item->nama.' tidak valid.',
+                        $slug.'.mimes' => 'Dokumen '.$item->nama.' hanya boleh berformat gambar (JPEG, PNG, GIF, WebP, BMP, SVG) atau PDF.',
+                    ]
+                );
+
+                if ($fileValidator->fails()) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => $fileValidator->errors()->first($slug, 'id'),                
+                        'error_type' => 'validation_error',
+                        'field' => $slug,
                     ], 422);
                 }
             }

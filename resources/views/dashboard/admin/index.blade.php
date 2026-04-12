@@ -1,37 +1,37 @@
 @extends('layouts.main')
 
-@section('title', 'Dashboard')
+@section('title', 'Dasbor')
 
 @section('content')
     <div class="row gy-4 mb-4">
-        <!-- Gamification Card -->
+        <!-- Kartu sambutan -->
         <div class="col-md-12 col-lg-8">
             <div class="card h-100">
                 <div class="d-flex align-items-end row">
                     <div class="col-md-6 order-2 order-md-1">
                         <div class="card-body">
-                            <h4 class="card-title pb-xl-2">Welcome Back <strong> {{ Auth::user()->name }}</strong>🎉</h4>
-                            <p class="mb-0">Selamat datang kembali di dashboard admin.</p>
-                            <p>Silakan cek permohonan baru yang masuk.</p>                            
+                            <h4 class="card-title pb-xl-2">Selamat datang kembali, <strong>{{ Auth::user()->name }}</strong></h4>
+                            <p class="mb-0">Anda berada di dasbor administrator.</p>
+                            <p>Periksa permohonan baru pada tabel di bawah.</p>                            
                         </div>
                     </div>
                     <div class="col-md-6 text-center text-md-end order-1 order-md-2">
                         <div class="card-body pb-0 px-0 px-md-4 ps-0">
                             <img src="../../assets/img/illustrations/illustration-john-light.png" height="180"
-                                alt="View Profile" data-app-light-img="illustrations/illustration-john-light.png"
+                                alt="Ilustrasi" data-app-light-img="illustrations/illustration-john-light.png"
                                 data-app-dark-img="illustrations/illustration-john-dark.png" />
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <!--/ Gamification Card -->     
+        <!--/ Kartu sambutan -->
 
-        <!-- Online Users Card -->
+        <!-- Kartu pengguna online -->
         <div class="col-md-12 col-lg-4">
             <div class="card h-100">
                 <div class="card-body">
-                    <h5 class="card-title">Online Users</h5>
+                    <h5 class="card-title">Pengguna online</h5>
                 </div>
                 <div class="card-body">
                     <ul class="list-group list-group-flush">
@@ -45,7 +45,7 @@
                 </div>
             </div>
         </div>
-        <!--/ Online Users Card -->
+        <!--/ Kartu pengguna online -->
     </div>
 
     <div class="row gy-4">
@@ -90,7 +90,23 @@
     <script src="{{ asset('assets/vendor/libs/datatables-bs5/datatables-bootstrap5.js') }}"></script>
     <script>
         $(document).ready(function() {
-            $('#permohonan-table').DataTable();
+            $('#permohonan-table').DataTable({
+                language: {
+                    search: 'Cari:',
+                    lengthMenu: 'Tampilkan _MENU_ entri',
+                    info: 'Menampilkan _START_–_END_ dari _TOTAL_ entri',
+                    infoEmpty: 'Menampilkan 0 entri',
+                    infoFiltered: '(disaring dari _MAX_ entri)',
+                    zeroRecords: 'Tidak ada data yang cocok',
+                    emptyTable: 'Tidak ada data',
+                    paginate: {
+                        first: 'Pertama',
+                        last: 'Terakhir',
+                        next: 'Berikutnya',
+                        previous: 'Sebelumnya'
+                    }
+                }
+            });
         });
     </script>
 @endpush

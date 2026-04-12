@@ -171,7 +171,10 @@
                             @foreach ($msJenisDokumen as $item)
                                 <div class="mb-3">
                                     <label for="{{ $item->slug }}" class="form-label">{{ $item->nama }}</label>
-                                    <input type="file" class="form-control" id="{{ $item->slug }}" name="{{ $item->slug }}">
+                                    <small class="form-text text-muted">
+                                        File yang diperbolehkan: gambar (JPEG, JPG, PNG, GIF, WEBP, BMP, SVG) dan PDF.
+                                    </small>                               
+                                    <input type="file" class="form-control" id="{{ $item->slug }}" name="{{ $item->slug }}" accept="image/*,application/pdf">
                                 </div>
                             @endforeach
                             <button class="btn btn-secondary" type="button"
