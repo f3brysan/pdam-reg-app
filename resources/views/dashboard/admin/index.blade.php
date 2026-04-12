@@ -74,7 +74,7 @@
                                         <td class="text-center">{{ \Carbon\Carbon::parse($permohonan->tgl_daftar)->locale('id')->translatedFormat('d F Y') }}</td>
                                         <td class="text-center"><span class="badge bg-info">{{ $permohonan->status }}</span></td>
                                         <td class="text-center">
-                                            <a href="{{ route('permohonan.show', Crypt::encryptString($permohonan->id)) }}" class="btn btn-sm btn-primary">Lihat</a>
+                                            <a href="{{ route('permohonan.show', Crypt::encrypt($permohonan->id)) }}" class="btn btn-sm btn-primary">Lihat</a>
                                         </td>
                                     </tr>
                                 @endforeach
