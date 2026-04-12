@@ -143,9 +143,9 @@
                                         <div class="dropdown-divider"></div>
                                     </li>
                                     <li>
-                                        <a class="dropdown-item" href="pages-account-settings-account.html">
-                                            <i class="mdi mdi-cog-outline me-2"></i>
-                                            <span class="align-middle">Settings</span>
+                                        <a class="dropdown-item" href="{{ route('password.change') }}">
+                                            <i class="mdi mdi-lock-outline me-2"></i>
+                                            <span class="align-middle">Ganti Password</span>
                                         </a>
                                     </li>
                                     <li>

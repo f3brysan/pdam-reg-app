@@ -65,5 +65,23 @@ class AuthController extends Controller
         return redirect()->route('login')->with('success', 'Registration successful. Please login to continue');
         
     }
-    
+
+    public function changePassword()
+    {
+        return view('auth.change-password');
+    }
+
+    public function updatePassword(Request $request)
+    {
+        $validated = $request->validate([
+            'current_password' => ['required', 'current_password'],
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
+        ]);
+
+        $request->user()->update([
+            'password' => $validated['password'],
+        ]);
+
+        return redirect()->route('password.change')->with('success', 'Password berhasil diubah.');
+    }
 }

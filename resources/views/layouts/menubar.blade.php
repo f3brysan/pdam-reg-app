@@ -7,7 +7,7 @@
           <i class="menu-icon tf-icons mdi mdi-home-outline"></i>
           <div data-i18n="Dashboard">Dashboard</div>
         </a>
-      </li>
+      </li>      
       @role('admin')
       <li class="menu-item {{ request()->is('permohonan*') ? 'active' : '' }}">
         <a href="{{ route('permohonan.index') }}" class="menu-link">

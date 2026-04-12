@@ -27,6 +27,9 @@ route::get('/',[FrontpageController::class, 'index'])->name('index');
 
 
 route::group(['middleware' => 'auth'], function () {
+    route::get('/password/change', [AuthController::class, 'changePassword'])->name('password.change');
+    route::post('/password/change', [AuthController::class, 'updatePassword'])->name('password.update');
+
     route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     route::prefix('permohonan')->group(function () {
