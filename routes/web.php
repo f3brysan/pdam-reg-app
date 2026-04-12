@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BerkasPDFController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\FrontpageController;
 use App\Http\Controllers\MsJenisDokumenController;
 use App\Http\Controllers\MsJenisMeteranController;
 use App\Http\Controllers\MsJenisTempatTinggalController;
@@ -12,11 +13,6 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\WilayahController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
-
 route::get('/login', [AuthController::class, 'login'])->name('login');
 route::post('/login', [AuthController::class, 'authenticate'])->name('authenticate');
 route::post('/logout', [AuthController::class, 'logout'])->name('logout');
@@ -25,6 +21,10 @@ route::post('/register', [AuthController::class, 'registerStore'])->name('regist
 
 route::get('/get-kecamatan/{parr}', [WilayahController::class, 'getKecamatan'])->name('get-kecamatan');
 route::get('/get-kelurahan/{parr}', [WilayahController::class, 'getKelurahan'])->name('get-kelurahan');
+
+route::get('/',[FrontpageController::class, 'index'])->name('index');
+
+
 
 route::group(['middleware' => 'auth'], function () {
     route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
