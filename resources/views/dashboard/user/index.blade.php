@@ -222,10 +222,11 @@
                             </div>
                             <div class="col-6 text-center">
                                 <h6 class="fw-semibold my-3">Cara Pembayaran</h6>
-                                <button class="btn btn-outline-primary btn-sm">
+                                <a href="{{ asset('assets/img/panduan-pembayaran-pdam.jpeg') }}" target="_blank" class="btn btn-outline-primary btn-sm">
                                     <i class="mdi mdi-cash-multiple-outline me-2"></i>
                                     Lihat Cara Pembayaran
-                                </button>
+                                </a>
+                           
                             </div>
                         </div>
 

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\PemohonanBillingMail;
+use App\Mail\PemohonanPemasanganMail;
 use App\Models\MsJenisDokumen;
 use App\Models\MsJenisTempatTinggal;
 use App\Models\MsMeteran;
@@ -16,6 +18,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 
 class PermohonanController extends Controller
@@ -34,6 +38,7 @@ class PermohonanController extends Controller
         $msJenisTempatTinggal = MsJenisTempatTinggal::all();
         $msPekerjaan = MsPekerjaan::all();
         $msJenisDokumen = MsJenisDokumen::all();
+
         return view('permohonan.user.create', compact('msJenisTempatTinggal', 'msPekerjaan', 'msJenisDokumen'));
     }
 
@@ -83,12 +88,13 @@ class PermohonanController extends Controller
                 $errors = $validate->errors();
                 $firstField = $errors->keys()[0] ?? null;
                 $firstMessage = $errors->first();
+
                 return response()->json([
                     'success' => false,
                     'error_type' => 'validation_error',
                     'field' => $firstField,
                     'message' => $firstMessage,
-                    'all_errors' => $errors
+                    'all_errors' => $errors,
                 ], 422);
             }
 
@@ -145,13 +151,14 @@ class PermohonanController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Permohonan berhasil diajukan',
-                'data' => $permohonanTransaction
+                'data' => $permohonanTransaction,
             ], 200);
         } catch (\Throwable $th) {
             DB::rollBack();
+
             return response()->json([
                 'success' => false,
-                'message' => $th->getMessage()
+                'message' => $th->getMessage(),
             ], 500);
         }
     }
@@ -219,17 +226,31 @@ class PermohonanController extends Controller
 
             DB::commit();
 
+            $permohonan->refresh();
+
+            $pemohon = User::find($id);
+            if ($pemohon && filter_var($pemohon->email, FILTER_VALIDATE_EMAIL)) {
+                try {
+                    Mail::to($pemohon->email)->send(new PemohonanBillingMail($permohonan, $createBilling));
+                } catch (\Throwable $mailError) {
+                    Log::warning('Gagal mengirim email tagihan ke pemohon: '.$mailError->getMessage(), [
+                        'permohonan_id' => $id,
+                    ]);
+                }
+            }
+
             return response()->json([
                 'success' => true,
                 'message' => 'Permohonan berhasil divalidasi',
-                'data' => $createBilling
+                'data' => $createBilling,
             ], 200);
 
         } catch (\Throwable $th) {
             DB::rollBack();
+
             return response()->json([
                 'success' => false,
-                'message' => $th->getMessage()
+                'message' => $th->getMessage(),
             ], 500);
         }
     }
@@ -249,7 +270,7 @@ class PermohonanController extends Controller
                     'error_type' => 'validation_error',
                     'field' => 'bukti_pembayaran',
                     'message' => $validate->errors()->first(),
-                    'all_errors' => $validate->errors()
+                    'all_errors' => $validate->errors(),
                 ], 422);
             }
 
@@ -270,13 +291,14 @@ class PermohonanController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Bukti pembayaran berhasil diunggah',
-                'data' => $updateBilling
+                'data' => $updateBilling,
             ], 200);
         } catch (\Throwable $th) {
             DB::rollBack();
+
             return response()->json([
                 'success' => false,
-                'message' => $th->getMessage()
+                'message' => $th->getMessage(),
             ], 500);
         }
     }
@@ -312,12 +334,12 @@ class PermohonanController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Permohonan berhasil diverifikasi',
-                'data' => $updateStatus
+                'data' => $updateStatus,
             ], 200);
         } catch (\Throwable $th) {
             return response()->json([
                 'success' => false,
-                'message' => $th->getMessage()
+                'message' => $th->getMessage(),
             ], 500);
         }
     }
@@ -380,6 +402,20 @@ class PermohonanController extends Controller
 
             DB::commit();
 
+            $checkPermohonan->refresh();
+            $permohonanOfficer->load(['petugas', 'msMeteran']);
+
+            $pelanggan = User::find($id);
+            if ($pelanggan && filter_var($pelanggan->email, FILTER_VALIDATE_EMAIL)) {
+                try {
+                    Mail::to($pelanggan->email)->send(new PemohonanPemasanganMail($checkPermohonan, $permohonanOfficer));
+                } catch (\Throwable $mailError) {
+                    Log::warning('Gagal mengirim email jadwal pemasangan ke pelanggan: '.$mailError->getMessage(), [
+                        'permohonan_id' => $id,
+                    ]);
+                }
+            }
+
             return response()->json([
                 'success' => true,
                 'message' => 'Petugas pemasangan berhasil ditetapkan',
@@ -387,6 +423,7 @@ class PermohonanController extends Controller
             ], 200);
         } catch (\Throwable $th) {
             DB::rollBack();
+
             return response()->json([
                 'success' => false,
                 'message' => $th->getMessage(),
@@ -405,7 +442,6 @@ class PermohonanController extends Controller
                     'message' => 'Data permohonan tidak ditemukan',
                 ], 404);
             }
-
 
             if ($request->hasFile('images')) {
                 foreach ($request->file('images') as $image) {
@@ -444,6 +480,7 @@ class PermohonanController extends Controller
                 ], 404);
             }
             $officerDocument->delete();
+
             return response()->json([
                 'success' => true,
                 'message' => 'Dokumen berhasil dihapus',
