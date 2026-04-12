@@ -12,22 +12,24 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('permohonan_transactions', function (Blueprint $table) {
-            $table->integer('id');
+            $table->integer('id')->primary();
             $table->string('no_register')->nullable();
+            $table->date('tgl_daftar')->nullable();
             $table->string('nik')->nullable();
             $table->string('nama')->nullable();
+            $table->string('telepon', 20)->nullable();
             $table->string('alamat')->nullable();
             $table->integer('ms_pekerjaan_id')->nullable();
             $table->string('jumlah_keluarga')->nullable();
             $table->integer('ms_jenis_tempat_tinggal_id')->nullable();
+            $table->string('kecamatan')->nullable();
+            $table->string('kelurahan')->nullable();
+            $table->string('longitude')->nullable();
+            $table->string('latitude')->nullable();
             $table->decimal('jumlah_kran', 2, 0)->nullable();
             $table->decimal('sedia_bayar', 1, 0)->nullable();
             $table->string('no_pelanggan')->nullable();
-            $table->integer('petugas_id')->nullable();
-            $table->date('tgl_register')->nullable();
-            $table->date('tgl_pasang')->nullable();
-            $table->integer('ms_meteran_id')->nullable();
-            $table->string('no_seri_meteran')->nullable();
+            $table->string('status', 50)->nullable();
             $table->timestamps(6);
         });
     }
