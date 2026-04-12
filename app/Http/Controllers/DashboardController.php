@@ -96,6 +96,62 @@ class DashboardController extends Controller
 
     public function pimpinanIndex()
     {
-        return view('dashboard.pimpinan.index');
+        $totalPermohonan = PermohonanTransaction::count();
+        $pelangganBermeter = PermohonanTransaction::query()
+            ->whereNotNull('no_pelanggan')
+            ->where('no_pelanggan', '!=', '')
+            ->count();
+        $statusSelesai = PermohonanTransaction::query()
+            ->whereIn('status', ['SELESAI', 'PEMASANGAN SELESAI'])
+            ->count();
+        $antrianPemasangan = PermohonanTransaction::query()
+            ->whereIn('status', ['MENUNGGU JADWAL PEMASANGAN', 'TERJADWAL PEMASANGAN'])
+            ->count();
+        $totalPemasanganSelesai = PermohonanOfficer::query()->where('is_done', 1)->count();
+        $pemasanganSelesaiBulanIni = PermohonanOfficer::query()
+            ->where('is_done', 1)
+            ->whereBetween('done_at', [now()->startOfMonth(), now()->endOfMonth()])
+            ->count();
+
+        $statusDistribution = PermohonanTransaction::query()
+            ->select('status', DB::raw('count(*) as total'))
+            ->groupBy('status')
+            ->orderByDesc('total')
+            ->get();
+
+        $chartLabels = [];
+        $chartPermohonan = [];
+        $chartPemasangan = [];
+        $start = now()->startOfMonth()->subMonths(5);
+        for ($i = 0; $i < 6; $i++) {
+            $month = (clone $start)->addMonths($i);
+            $chartLabels[] = $month->translatedFormat('M Y');
+            $chartPermohonan[] = PermohonanTransaction::query()
+                ->whereBetween('created_at', [$month->copy()->startOfMonth(), $month->copy()->endOfMonth()])
+                ->count();
+            $chartPemasangan[] = PermohonanOfficer::query()
+                ->where('is_done', 1)
+                ->whereBetween('done_at', [$month->copy()->startOfMonth(), $month->copy()->endOfMonth()])
+                ->count();
+        }
+
+        $daftarPelanggan = PermohonanTransaction::query()
+            ->orderByDesc('updated_at')
+            ->limit(100)
+            ->get(['no_register', 'no_pelanggan', 'nama', 'kecamatan', 'kelurahan', 'telepon', 'status', 'tgl_daftar']);
+
+        return view('dashboard.pimpinan.index', compact(
+            'totalPermohonan',
+            'pelangganBermeter',
+            'statusSelesai',
+            'antrianPemasangan',
+            'totalPemasanganSelesai',
+            'pemasanganSelesaiBulanIni',
+            'statusDistribution',
+            'chartLabels',
+            'chartPermohonan',
+            'chartPemasangan',
+            'daftarPelanggan'
+        ));
     }
 }
