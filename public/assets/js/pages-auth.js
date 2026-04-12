@@ -7,9 +7,52 @@ const formAuthentication = document.querySelector('#formAuthentication');
 
 document.addEventListener('DOMContentLoaded', function (e) {
   (function () {
+    // Password visibility — run before FormValidation so a validator error cannot skip this
+    document.querySelectorAll('.form-password-toggle').forEach(function (wrap) {
+      const input = wrap.querySelector('input');
+      const toggle = wrap.querySelector('.input-group-text');
+      if (!input || !toggle) {
+        return;
+      }
+      const icon = toggle.querySelector('i');
+      toggle.setAttribute('role', 'button');
+      toggle.setAttribute('tabindex', '0');
+      toggle.setAttribute('aria-label', 'Toggle password visibility');
+
+      function toggleVisibility() {
+        if (input.type === 'password') {
+          input.type = 'text';
+          if (icon) {
+            icon.classList.remove('mdi-eye-off-outline');
+            icon.classList.add('mdi-eye-outline');
+          }
+        } else {
+          input.type = 'password';
+          if (icon) {
+            icon.classList.remove('mdi-eye-outline');
+            icon.classList.add('mdi-eye-off-outline');
+          }
+        }
+      }
+
+      toggle.addEventListener('click', function (ev) {
+        ev.preventDefault();
+        ev.stopPropagation();
+        toggleVisibility();
+      });
+      toggle.addEventListener('keydown', function (ev) {
+        if (ev.key === 'Enter' || ev.key === ' ') {
+          ev.preventDefault();
+          toggleVisibility();
+        }
+      });
+    });
+
     // Form validation for Add new record
     if (formAuthentication) {
-      const fv = FormValidation.formValidation(formAuthentication, {
+      let fv;
+      try {
+        fv = FormValidation.formValidation(formAuthentication, {
         fields: {
           username: {
             validators: {
@@ -98,6 +141,11 @@ document.addEventListener('DOMContentLoaded', function (e) {
           });
         }
       });
+      } catch (err) {
+        if (typeof console !== 'undefined' && console.warn) {
+          console.warn('FormValidation init failed', err);
+        }
+      }
     }
 
     //  Two Steps Verification
