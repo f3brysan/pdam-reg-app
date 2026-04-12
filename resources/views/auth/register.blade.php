@@ -140,8 +140,10 @@
                                         aria-describedby="password" required />
                                     <label for="password">Password</label>
                                 </div>
-                                <span class="input-group-text cursor-pointer"><i
-                                        class="mdi mdi-eye-off-outline"></i></span>
+                                <button type="button" class="input-group-text cursor-pointer"
+                                    aria-label="Tampilkan atau sembunyikan password">
+                                    <i class="mdi mdi-eye-off-outline"></i>
+                                </button>
                             </div>
                         </div>
                         <div class="mb-3">

@@ -173,7 +173,7 @@
                 </div>
             </div>
 
-            @if ($permohonanTransactions->status == 'PEMASANGAN SELESAI')
+            @if ($permohonanTransactions && $permohonanTransactions->status == 'PEMASANGAN SELESAI')
                 <div class="card mb-4">
                     <div class="card-header">
                         <h5 class="card-title mb-0">Konfirmasi Hasil Pemasangan</h5>
@@ -387,7 +387,7 @@
                         url: "{{ route('permohonan.konfirmasi-hasil-pemasangan') }}",
                         type: 'POST',
                         data: {
-                            permohonan_transaction_id: "{{ Crypt::encrypt($permohonanTransactions->id) }}"
+                            permohonan_transaction_id: "{{ $permohonanTransactions ? Crypt::encrypt($permohonanTransactions->id) : null }}"
                         },
                         headers: {
                             'X-CSRF-TOKEN': '{{ csrf_token() }}',
