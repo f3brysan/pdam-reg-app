@@ -29,10 +29,15 @@
                                             <td class="text-center">{{ $item->tgl_daftar }}</td>
                                             <td>{{ $item->nama }}</td>
                                             <td class="text-center">
-                                                <span class="badge bg-label-primary">{{ $item->status }}</span>
+                                                @if($item->status == 'SELESAI')
+                                                <span class="badge bg-label-success">{{ $item->status }}</span>
+                                                @else
+                                                <span class="badge bg-label-primary">{{ $item->status }}
+                                                @endif
+                                                </span>
                                             </td>
                                             <td class="text-center">
-                                                <a href="{{ route('permohonan.show', Crypt::encryptString($item->id)) }}" class="btn btn-sm btn-primary">Lihat</a>
+                                                <a href="{{ route('permohonan.show', Crypt::encrypt($item->id)) }}" class="btn btn-sm btn-primary">Lihat</a>
                                             </td>
                                         </tr>
                                     @empty

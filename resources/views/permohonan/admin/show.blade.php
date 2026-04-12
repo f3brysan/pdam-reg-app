@@ -29,7 +29,7 @@
                     <h5 class="card-title mb-0">Informasi Permohonan</h5>
                 </div>
                 <div class="card-body">
-                    @if (! $permohonan)
+                    @if (!$permohonan)
                         <div class="alert alert-warning mb-0">Data permohonan tidak ditemukan.</div>
                     @else
                         <div class="row">
@@ -98,7 +98,7 @@
                 </div>
             </div>
 
-            @if (! empty($permohonanBiling))
+            @if (!empty($permohonanBiling))
                 <div class="card mb-4">
                     <div class="card-header">
                         <h5 class="card-title mb-0">Bukti Pembayaran</h5>
@@ -108,18 +108,19 @@
                         <h6>Harga : Rp. {{ number_format($permohonanBiling->price, 0, ',', '.') }}</h6>
                         @if ($permohonanBiling->path)
                             <h6>Bukti Pembayaran</h6>
-                            <a href="{{ asset('storage/'.$permohonanBiling->path) }}" target="_blank"
+                            <a href="{{ asset('storage/' . $permohonanBiling->path) }}" target="_blank"
                                 class="btn btn-sm btn-outline-primary">Lihat</a>
 
                             <div class="d-flex justify-content-end align-items-center">
-                                @if($permohonanBiling->is_valid == false)
+                                @if ($permohonanBiling->is_valid == false)
                                     <button class="btn btn-sm btn-success" id="btn-verifikasi-pembayaran">
                                         <i class="fa fa-check"></i> Verifikasi Pembayaran
                                     </button>
                                 @else
-                                <p class="small">Pembayaran sudah divalidasi <br> Pada : {{ \Carbon\Carbon::parse($permohonanBiling->valid_at)->locale('id')->translatedFormat('d F Y H:i:s') }}
-                                <br> Diverifikasi oleh : {{ optional($permohonanBiling->validBy)->name }}
-                                </p>
+                                    <p class="small">Pembayaran sudah divalidasi <br> Pada :
+                                        {{ \Carbon\Carbon::parse($permohonanBiling->valid_at)->locale('id')->translatedFormat('d F Y H:i:s') }}
+                                        <br> Diverifikasi oleh : {{ optional($permohonanBiling->validBy)->name }}
+                                    </p>
                                 @endif
                             </div>
                         @else
@@ -129,24 +130,85 @@
                 </div>
             @endif
 
-            @if(! empty($permohonanBiling) && $permohonanBiling->is_valid == true)
-                <div class="card">
+            @if (!empty($permohonanBiling) && $permohonanBiling->is_valid == true)
+                <div class="card mb-4">
                     <div class="card-header">
                         <h5 class="card-title mb-0">Set Petugas Pemasangan</h5>
                     </div>
                     <div class="card-body">
-                        @if(! empty($permohonanOfficer))
+                        @if (!empty($permohonanOfficer))
                             <p> Petugas pemasangan : {{ optional($permohonanOfficer->petugas)->name }}
-                            <br> Jenis meteran : {{ optional($permohonanOfficer->msMeteran)->nama }}
-                            <br> Nomor meteran : {{ $permohonanOfficer->nomor_seri }}
-                            <br> Tanggal pasang : {{ \Carbon\Carbon::parse($permohonanOfficer->tgl_pasang)->locale('id')->translatedFormat('d F Y') }}
+                                <br> Jenis meteran : {{ optional($permohonanOfficer->msMeteran)->nama }}
+                                <br> Nomor meteran : {{ $permohonanOfficer->nomor_seri }}
+                                <br> Tanggal pasang :
+                                {{ \Carbon\Carbon::parse($permohonanOfficer->tgl_pasang)->locale('id')->translatedFormat('d F Y') }}
                             </p>
+
+                            @if ($permohonanOfficer->is_done == true)
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <p> Hasil pemasangan : <span class="badge bg-success">Selesai</span>
+                                            <br>
+                                            Tanggal pemasangan :
+                                            {{ \Carbon\Carbon::parse($permohonanOfficer->done_at)->locale('id')->translatedFormat('d F Y H:i:s') }}
+                                            WIB
+                                        </p>
+                                    </div>
+                                </div>
+                            @endif
                         @else
                             <button class="btn btn-sm btn-success" id="btn-set-petugas-pemasangan">
                                 <i class="fa fa-check"></i> Set Petugas Pemasangan
                             </button>
                         @endif
-                    </div>  
+                    </div>
+                </div>
+            @endif
+
+            @if (!empty($permohonanOfficer) && $permohonanOfficer->is_done == true)
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Laporkan Hasil Pemasangan</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <p> Dokumen terlampir : {{ $officerDocuments->count() }}</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">                               
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <table class="table table-bordered">
+                                            <thead>
+                                                <tr>
+                                                    <th>No</th>
+                                                    <th>Dokumen</th>                                                    
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach ($officerDocuments as $officerDocument)
+                                                    <tr>
+                                                        <td>{{ $loop->iteration }}</td>
+                                                        <td class="text-center">
+                                                            <a href="{{ asset('storage/' . $officerDocument->path) }}"
+                                                                target="_blank">
+                                                                <img src="{{ asset('storage/' . $officerDocument->path) }}"
+                                                                    alt="Dokumen"
+                                                                    style="max-width: 80px; max-height: 80px;"
+                                                                    class="img-thumbnail">
+                                                            </a>
+                                                        </td>                                                       
+                                                    </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             @endif
         </div>
@@ -164,7 +226,7 @@
                             @foreach ($permohonanDokumen as $dokumen)
                                 <li class="list-group-item d-flex justify-content-between align-items-center px-0">
                                     <span>{{ optional($dokumen->msJenisDokumen)->nama }}</span>
-                                    <a href="{{ asset('storage/'.$dokumen->path) }}" target="_blank"
+                                    <a href="{{ asset('storage/' . $dokumen->path) }}" target="_blank"
                                         class="btn btn-sm btn-outline-primary">Lihat</a>
                                 </li>
                             @endforeach
@@ -199,7 +261,8 @@
     </div>
 
     <!-- Modal Input Harga -->
-    <div class="modal fade" id="modalInputHarga" tabindex="-1" aria-labelledby="modalInputHargaLabel" aria-hidden="true">
+    <div class="modal fade" id="modalInputHarga" tabindex="-1" aria-labelledby="modalInputHargaLabel"
+        aria-hidden="true">
         <div class="modal-dialog">
             <form id="form-input-harga">
                 <div class="modal-content">
@@ -223,7 +286,8 @@
         </div>
     </div>
 
-    <div class="modal fade" id="modalSetPetugasPemasangan" tabindex="-1" aria-labelledby="modalSetPetugasPemasanganLabel" aria-hidden="true">
+    <div class="modal fade" id="modalSetPetugasPemasangan" tabindex="-1"
+        aria-labelledby="modalSetPetugasPemasanganLabel" aria-hidden="true">
         <div class="modal-dialog">
             <form id="form-set-petugas-pemasangan">
                 <div class="modal-content">
@@ -256,7 +320,8 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Nomor Meteran</label>
-                            <input type="text" class="form-control" id="nomor-seri" name="nomor_seri" placeholder="Masukkan nomor meteran" required>
+                            <input type="text" class="form-control" id="nomor-seri" name="nomor_seri"
+                                placeholder="Masukkan nomor meteran" required>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -280,7 +345,7 @@
     <script src="https://cdn.jsdelivr.net/npm/toastr@2.1.4/build/toastr.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastr@2.1.4/build/toastr.min.css">
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             var latEl = document.getElementById('latitude-value');
             var lngEl = document.getElementById('longitude-value');
             var mapEl = document.getElementById('detail-map');
@@ -304,19 +369,21 @@
     </script>
 
     <script>
-        $(document).ready(function () {
-            $('#input-harga').mask('000.000.000.000', { reverse: true });
+        $(document).ready(function() {
+            $('#input-harga').mask('000.000.000.000', {
+                reverse: true
+            });
             $('.select2-modal').select2({
                 dropdownParent: $('#modalSetPetugasPemasangan'),
                 width: '100%'
             });
         });
 
-        $('#btn-validasi-permohonan').click(function () {
+        $('#btn-validasi-permohonan').click(function() {
             $('#modalInputHarga').modal('show');
         });
 
-        $('#form-input-harga').submit(function (e) {
+        $('#form-input-harga').submit(function(e) {
             e.preventDefault();
 
             $('#modalInputHarga').modal('hide');
@@ -334,7 +401,7 @@
                 showCancelButton: true,
                 confirmButtonText: 'Ya',
                 cancelButtonText: 'Tidak',
-            }).then(function (result) {
+            }).then(function(result) {
                 if (result.isConfirmed) {
                     Swal.fire({
                         title: 'Loading',
@@ -351,13 +418,13 @@
                             _token: '{{ csrf_token() }}',
                             harga: harga,
                         },
-                        success: function (response) {
+                        success: function(response) {
                             Swal.close();
                             toastr.success('Permohonan berhasil divalidasi');
 
                             location.reload();
                         },
-                        error: function (xhr, status, error) {
+                        error: function(xhr, status, error) {
                             toastr.error(xhr.responseJSON.message);
 
                             $("#modalInputHarga").modal("show");
@@ -369,7 +436,7 @@
 
         });
 
-        $('#btn-verifikasi-pembayaran').click(function () {
+        $('#btn-verifikasi-pembayaran').click(function() {
             Swal.fire({
                 title: 'Verifikasi Pembayaran',
                 text: 'Apakah Anda yakin ingin verifikasi pembayaran ini?',
@@ -377,7 +444,7 @@
                 showCancelButton: true,
                 confirmButtonText: 'Ya',
                 cancelButtonText: 'Tidak',
-            }).then(function (result) {
+            }).then(function(result) {
                 if (result.isConfirmed) {
                     Swal.fire({
                         title: 'Loading',
@@ -393,16 +460,16 @@
                         data: {
                             _token: '{{ csrf_token() }}',
                         },
-                        success: function (response) {
+                        success: function(response) {
                             Swal.fire({
                                 title: 'Success',
                                 text: 'Pembayaran berhasil diverifikasi',
                                 icon: 'success',
-                            }).then(function () {
+                            }).then(function() {
                                 location.reload();
                             });
                         },
-                        error: function (xhr, status, error) {
+                        error: function(xhr, status, error) {
                             Swal.fire({
                                 title: 'Error',
                                 text: 'Terjadi kesalahan saat verifikasi pembayaran',
@@ -414,11 +481,11 @@
             });
         });
 
-        $('#btn-set-petugas-pemasangan').click(function () {
+        $('#btn-set-petugas-pemasangan').click(function() {
             $('#modalSetPetugasPemasangan').modal('show');
         });
 
-        $('#form-set-petugas-pemasangan').submit(function (e) {
+        $('#form-set-petugas-pemasangan').submit(function(e) {
             e.preventDefault();
 
             $.ajax({
@@ -431,17 +498,17 @@
                     tgl_pasang: $('#tgl-pasang').val(),
                     nomor_seri: $('#nomor-seri').val(),
                 },
-                success: function (response) {
+                success: function(response) {
                     $('#modalSetPetugasPemasangan').modal('hide');
                     Swal.fire({
                         title: 'Success',
                         text: response.message,
                         icon: 'success',
-                    }).then(function () {
+                    }).then(function() {
                         location.reload();
                     });
                 },
-                error: function (xhr) {
+                error: function(xhr) {
                     let message = 'Terjadi kesalahan saat menyimpan data';
                     if (xhr.responseJSON && xhr.responseJSON.message) {
                         message = xhr.responseJSON.message;

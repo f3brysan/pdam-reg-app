@@ -159,7 +159,7 @@ class PermohonanController extends Controller
     public function show($id)
     {
         $id = Crypt::decrypt($id);
-        
+
         $permohonan = PermohonanTransaction::with(['msPekerjaan', 'msJenisTempatTinggal'])
             ->where('id', $id)
             ->first();
@@ -176,12 +176,13 @@ class PermohonanController extends Controller
             ->where('permohonan_transaction_id', $id)
             ->get();
 
+        $officerDocuments = OfficerDocument::where('permohonan_transaction_id', $id)->where('petugas_id', auth()->user()->id)->get();
+
         if (Auth::user()->roles->first()->name == 'teknisi') {
-            $officerDocuments = OfficerDocument::where('permohonan_transaction_id', $id)->where('petugas_id', auth()->user()->id)->get();
             return view('permohonan.teknisi.show', compact('permohonan', 'permohonanDokumen', 'permohonanBiling', 'permohonanOfficer', 'officers', 'msMeteran', 'officerDocuments'));
         }
 
-        return view('permohonan.admin.show', compact('permohonan', 'permohonanDokumen', 'permohonanBiling', 'permohonanOfficer', 'officers', 'msMeteran'));
+        return view('permohonan.admin.show', compact('permohonan', 'permohonanDokumen', 'permohonanBiling', 'permohonanOfficer', 'officers', 'msMeteran', 'officerDocuments'));
     }
 
     public function validasi(Request $request, $id)
@@ -372,7 +373,7 @@ class PermohonanController extends Controller
 
             $NoPelanggan = 'JI-'.strtotime(now());
 
-            PermohonanTransaction::where('id', $id)->update([   
+            PermohonanTransaction::where('id', $id)->update([
                 'no_pelanggan' => $NoPelanggan,
                 'status' => 'TERJADWAL PEMASANGAN',
             ]);
@@ -391,7 +392,7 @@ class PermohonanController extends Controller
                 'message' => $th->getMessage(),
             ], 500);
         }
-    }   
+    }
 
     public function uploadDokumenTeknisi(Request $request, $id)
     {
@@ -405,15 +406,15 @@ class PermohonanController extends Controller
                 ], 404);
             }
 
-            
-            if($request->hasFile('images')) {
-                foreach ($request->file('images') as $image) {                    
-                    $file = $image->store('uploads/dokumen_teknisi', 'public');                    
-                    
+
+            if ($request->hasFile('images')) {
+                foreach ($request->file('images') as $image) {
+                    $file = $image->store('uploads/dokumen_teknisi', 'public');
+
                     $officerDocument = OfficerDocument::create([
                         'permohonan_transaction_id' => $permohonan->id,
-                        'petugas_id' => auth()->user()->id,                        
-                        'path' => $file,                                                
+                        'petugas_id' => auth()->user()->id,
+                        'path' => $file,
                     ]);
                 }
             }
@@ -504,7 +505,7 @@ class PermohonanController extends Controller
                     'message' => 'Data permohonan tidak ditemukan',
                 ], 404);
             }
-            
+
             $update = PermohonanTransaction::where('id', $id)->update([
                 'status' => 'SELESAI',
             ]);
