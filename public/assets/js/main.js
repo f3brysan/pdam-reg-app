@@ -177,9 +177,9 @@ if (document.getElementById('layout-menu')) {
       .init({
         lng: 'en',
         debug: false,
-        fallbackLng: 'en',
+        fallbackLng: 'id',
         backend: {
-          loadPath: assetsPath + 'json/locales/{{lng}}.json'
+          loadPath: assetsPath + '/json/locales/{{lng}}.json'
         },
         returnObjects: true
       })

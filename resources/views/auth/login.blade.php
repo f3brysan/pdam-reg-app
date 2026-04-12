@@ -8,7 +8,7 @@
     <meta name="viewport"
         content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
 
-    <title>Login | PDAM</title>
+    <title>Login | Perumdam Lawu Tirta Magetan</title>
 
     <meta name="description" content="" />
 
@@ -59,20 +59,16 @@
             <img src="{{ asset('assets/img/pdam-logo.jpg') }}" alt="Logo PDAM" style="height: 40px; width: auto; border-radius: 8px; box-shadow: 0 2px 6px #0001;">
        
             </span>
-            <span class="app-brand-text demo text-heading fw-bold">PDAM</span>
+            <span class="app-brand-text demo text-heading fw-bold">Perumdam Lawu Tirta Magetan</span>
         </a>
         <!-- /Logo -->
         <div class="authentication-inner row m-0">
             <!-- /Left Section -->
             <div class="d-none d-lg-flex col-lg-7 col-xl-8 align-items-center justify-content-center p-5 pb-2">
-                <img src="{{ asset('assets/img/illustrations/auth-login-illustration-light.png') }}"
-                    class="auth-cover-illustration w-100" alt="auth-illustration"
-                    data-app-light-img="illustrations/auth-login-illustration-light.png"
-                    data-app-dark-img="illustrations/auth-login-illustration-dark.png" />
-                <img src="{{ asset('assets/img/illustrations/auth-cover-login-mask-light.png') }}"
-                    class="authentication-image" alt="mask"
-                    data-app-light-img="illustrations/auth-cover-login-mask-light.png"
-                    data-app-dark-img="illustrations/auth-cover-login-mask-dark.png" />
+                <img src="https://beritajatim.com/wp-content/uploads/2022/12/IMG-20221225-WA0003.jpg"
+                    class="auth-cover-illustration w-200" alt="Ilustrasi pendaftaran"
+                    data-app-light-img="illustrations/auth-register-illustration-light.png"
+                    data-app-dark-img="illustrations/auth-register-illustration-dark.png" />       
             </div>
             <!-- /Left Section -->
 
@@ -92,14 +88,14 @@
                             {{ session('success') }}
                         </div>
                     @endif
-                    <h4 class="mb-2 fw-semibold">Welcome to PDAM! 👋</h4>
-                    <p class="mb-4">Please sign-in to your account and start the adventure</p>
+                    <h4 class="mb-2 fw-semibold">Welcome to Perumdam Lawu Tirta Magetan! 👋</h4>
+                    <p class="mb-4">Silakan masuk ke akun Anda untuk melanjutkan</p>
 
                     <form id="formAuthentication" class="mb-3" action="{{ route('login') }}" method="POST">
                         @csrf
                         <div class="form-floating form-floating-outline mb-3">
                             <input type="email" class="form-control" id="email" name="email"
-                                placeholder="Enter your email" autofocus />
+                                placeholder="Masukkan email Anda" autofocus />
                             <label for="email">Email</label>
                         </div>
                         <div class="mb-3">
@@ -109,7 +105,7 @@
                                         <input type="password" id="password" class="form-control" name="password"
                                             placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;"
                                             aria-describedby="password" />
-                                        <label for="password">Password</label>
+                                        <label for="password">Kata sandi</label>
                                     </div>
                                     <button type="button" class="input-group-text cursor-pointer"
                                         aria-label="Tampilkan atau sembunyikan password">
@@ -118,13 +114,13 @@
                                 </div>
                             </div>
                         </div>
-                        <button class="btn btn-primary d-grid w-100">Sign in</button>
+                        <button class="btn btn-primary d-grid w-100">Masuk</button>
                     </form>
 
                     <p class="text-center mt-2">
-                        <span>New on our platform?</span>
+                        <span>Belum punya akun?</span>
                         <a href="{{ route('register') }}">
-                            <span>Create an account</span>
+                            <span>Buat akun di sini</span>
                         </a>
                     </p>
 
