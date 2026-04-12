@@ -269,10 +269,8 @@
         <div class="container">
             <div class="row g-5 align-items-start">
                 <div class="col-lg-5">
-                    <h2 class="section-title h4 mb-3">Jam kerja kantor</h2>
-                    <p class="text-muted mb-0">
-                        Jam di bawah dapat Anda ubah di <code class="small">FrontpageController</code> agar sesuai jadwal resmi PDAM Magetan.
-                    </p>
+                    <h2 class="section-title h4 mb-3">Jam Aktif</h2>
+                {{--  TODO: Tambahkan jam kerja kantor --}}
                 </div>
                 <div class="col-lg-7">
                     <div class="table-responsive rounded-3 border" style="border-color: var(--water-200) !important;">
