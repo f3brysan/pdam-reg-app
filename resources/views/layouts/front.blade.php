@@ -5,7 +5,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="PDAM Kabupaten Magetan — layanan air bersih, informasi pelanggan, dan permohonan pasang baru.">
-    <title>@yield('title', 'PDAM Magetan')</title>
+    <title>@yield('title', 'Perumdam Lawu Tirta Magetan')</title>
+    <link rel="icon" href="{{ asset('assets/img/pdam-logo.jpg') }}" type="image/jpeg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">

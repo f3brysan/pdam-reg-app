@@ -1,6 +1,6 @@
 @extends('layouts.front')
 
-@section('title', 'Beranda — PDAM Kabupaten Magetan')
+@section('title', 'Perumdam Lawu Tirta Magetan')
 
 @push('styles')
     <style>
@@ -154,8 +154,11 @@
     <nav class="navbar navbar-expand-lg navbar-front sticky-top">
         <div class="container py-2">
             <a class="navbar-brand d-flex align-items-center gap-2 text-decoration-none" href="{{ route('index') }}">
-                <span class="brand-badge">P</span>
-                <span class="fw-bold text-dark lh-sm">PDAM Magetan<br><small class="fw-normal text-muted"
+                <span class="brand-badge">
+                    <img src="{{ asset('assets/img/pdam-logo.jpg') }}" alt="Logo PDAM" style="height: 38px; width: auto; border-radius: 8px; box-shadow: 0 2px 6px #0001;">
+                </span>
+           
+                <span class="fw-bold text-dark lh-sm">Perumdam Lawu Tirta Magetan<br><small class="fw-normal text-muted"
                         style="font-size: 0.7rem;">Kabupaten Magetan</small></span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navFront"
@@ -331,7 +334,7 @@
         <div class="container">
             <div class="row align-items-center g-3">
                 <div class="col-md-8">
-                    <strong class="d-block" style="color: var(--water-800);">PDAM Kabupaten Magetan</strong>
+                    <strong class="d-block" style="color: var(--water-800);">Perumdam Lawu Tirta Magetan</strong>
                     <span class="text-muted small">Halaman depan aplikasi registrasi pelanggan. Tampilan dapat disesuaikan dengan identitas visual resmi.</span>
                 </div>
                 <div class="col-md-4 text-md-end">
