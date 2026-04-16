@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BerkasPDFController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FrontpageController;
+use App\Http\Controllers\LaporanPemasanganController;
 use App\Http\Controllers\MsJenisDokumenController;
 use App\Http\Controllers\MsJenisMeteranController;
 use App\Http\Controllers\MsJenisTempatTinggalController;
@@ -31,6 +32,15 @@ route::group(['middleware' => 'auth'], function () {
     route::post('/password/change', [AuthController::class, 'updatePassword'])->name('password.update');
 
     route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    // * Laporan Pemasangan (prefix)
+    route::group(['middleware' => ['role:pimpinan']], function () {
+        route::prefix('laporan-pemasangan')->group(function () {
+            route::get('/', [LaporanPemasanganController::class, 'index'])->name('laporan-pemasangan.index');
+            route::get('/export/pdf', [LaporanPemasanganController::class, 'exportPdf'])->name('laporan-pemasangan.export.pdf');
+            route::get('/export/excel', [LaporanPemasanganController::class, 'exportExcel'])->name('laporan-pemasangan.export.excel');
+        });
+    });
 
     route::prefix('permohonan')->group(function () {
 
