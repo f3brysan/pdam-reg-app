@@ -46,9 +46,17 @@ class AuthController extends Controller
     {
         $validate = Validator::make($request->all(), [
             'name' => 'required',
-            'email' => 'required|email|unique:users',
+            'email' => 'required|email|unique:users,email',
             'password' => 'required|min:8',
+        ], [
+            'name.required' => 'Nama wajib diisi.',
+            'email.required' => 'Email wajib diisi.',
+            'email.email' => 'Format email tidak valid.',
+            'email.unique' => 'Email sudah digunakan.',
+            'password.required' => 'Kata sandi wajib diisi.',
+            'password.min' => 'Kata sandi minimal terdiri dari 8 karakter.',
         ]);
+   
 
         if ($validate->fails()) {
             return redirect()->route('register')->with('error', $validate->errors()->first())->withInput();

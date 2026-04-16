@@ -64,10 +64,8 @@
         <div class="authentication-inner row m-0">
             <!-- /Left Text -->
             <div class="d-none d-lg-flex col-lg-7 col-xl-8 align-items-center justify-content-center p-5 pb-2">
-                <img src="https://beritajatim.com/wp-content/uploads/2022/12/IMG-20221225-WA0003.jpg"
-                    class="auth-cover-illustration w-200" alt="Ilustrasi pendaftaran"
-                    data-app-light-img="illustrations/auth-register-illustration-light.png"
-                    data-app-dark-img="illustrations/auth-register-illustration-dark.png" />               
+                <img src="{{ asset('assets/img/perumdam.jpeg') }}"
+                    class="" alt="Ilustrasi pendaftaran" />       
             </div>
             <!-- /Left Text -->
 
