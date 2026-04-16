@@ -6,7 +6,7 @@
         <input type="hidden" name="id" id="userId">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="userModalLabel">Tambah User</h5>
+                    <h5 class="modal-title" id="userModalLabel">Tambah Pengguna</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -25,9 +25,9 @@
                             <input type="password" class="form-control mt-2" id="userPasswordConfirmation" name="password_confirmation" placeholder="Konfirmasi Password">
                         </div>
                         <div class="col-12 mb-3">
-                            <label for="userRole">Role</label>
+                            <label for="userRole">Peran</label>
                             <select class="form-control" id="userRole" name="role" required>
-                                <option value="">Pilih Role</option>
+                                <option value="">Pilih Peran</option>
                                 @foreach($roles as $role)
                                     <option value="{{ $role->name }}">{{ $role->name }}</option>
                                 @endforeach

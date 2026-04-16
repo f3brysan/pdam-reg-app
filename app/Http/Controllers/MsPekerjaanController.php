@@ -17,8 +17,8 @@ class MsPekerjaanController extends Controller
             return DataTables::of($pekerjaans)
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {
-                    return '<a href="javascript:void(0)" class="btn btn-primary btn-sm mr-1 edit-btn" data-id="'.$row->id.'">Edit</a>
-                            <a href="javascript:void(0)" class="btn btn-danger btn-sm delete-btn" data-id="'.$row->id.'">Delete</a>';
+                    return '<a href="javascript:void(0)" class="btn btn-primary btn-sm mr-1 edit-btn" data-id="'.$row->id.'">Ubah</a>
+                            <a href="javascript:void(0)" class="btn btn-danger btn-sm delete-btn" data-id="'.$row->id.'">Hapus</a>';
                 })
                 ->rawColumns(['action'])
                 ->make(true);

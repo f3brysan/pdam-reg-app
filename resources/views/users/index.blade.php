@@ -1,16 +1,16 @@
 @extends('layouts.main')
-@section('title', 'Manajemen User')
+@section('title', 'Manajemen Pengguna')
 @section('content')
     <div class="row">
         <div class="col-12">
             <div class="card">
                 <div class="card-header">
-                    <h4 class="card-title">Manajemen User</h4>
+                    <h4 class="card-title">Manajemen Pengguna</h4>
                 </div>
                 <div class="card-body">
                     <div class="row">
                         <div class="col-12 d-flex mb-3">
-                            <button class="btn btn-sm btn-primary" id="addUserButton">Tambah User</button>
+                            <button class="btn btn-sm btn-primary" id="addUserButton">Tambah Pengguna</button>
                         </div>
                     </div>
                     <div class="row">
@@ -21,8 +21,8 @@
                                         <th>No</th>
                                         <th>Nama</th>
                                         <th>Email</th>
-                                        <th>Role</th>
-                                        <th>Action</th>
+                                        <th>Peran</th>
+                                        <th>Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody></tbody>

@@ -25,8 +25,8 @@ class UserController extends Controller
                 ->addColumn('action', function ($row) {
                     $action = '';
                     if (! $row->hasRole('user')) {
-                        $action .= '<a href="javascript:void(0)" data-id="'.$row->id.'" class="btn btn-primary btn-sm mr-1 edit-btn">Edit</a>';
-                        $action .= '<a href="javascript:void(0)" class="btn btn-danger btn-sm delete-btn" data-id="'.$row->id.'">Delete</a>';
+                        $action .= '<a href="javascript:void(0)" data-id="'.$row->id.'" class="btn btn-primary btn-sm mr-1 edit-btn">Ubah</a>';
+                        $action .= '<a href="javascript:void(0)" class="btn btn-danger btn-sm delete-btn" data-id="'.$row->id.'">Hapus</a>';
                     }
                     return $action;
                 })
