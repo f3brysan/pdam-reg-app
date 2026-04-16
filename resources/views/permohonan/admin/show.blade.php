@@ -272,6 +272,12 @@
                     </div>
                     <div class="modal-body">
                         <div class="mb-3">
+                            <label for="input-no-pelanggan" class="form-label">No. Pelanggan</label>
+                            <input type="text" class="form-control" id="input-no-pelanggan" name="no_pelanggan"
+                                placeholder="Masukkan no pelanggan" required>
+                        </div>
+                   
+                        <div class="mb-3">
                             <label for="input-harga" class="form-label">Nominal tagihan (Rp)</label>
                             <input type="text" class="form-control" id="input-harga" name="harga"
                                 placeholder="Masukkan nominal tagihan" required>
@@ -394,6 +400,8 @@
                 return;
             }
 
+            const formData = new FormData(this);
+
             Swal.fire({
                 title: 'Validasi Permohonan',
                 text: 'Apakah Anda yakin ingin validasi permohonan ini?',
@@ -412,11 +420,13 @@
                     });
 
                     $.ajax({
-                        url: '{{ route('permohonan.validasi', Crypt::encryptString($permohonan->id)) }}',
+                        url: '{{ route('permohonan.validasi', Crypt::encrypt($permohonan->id)) }}',
                         type: 'POST',
-                        data: {
-                            _token: '{{ csrf_token() }}',
-                            harga: harga,
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
                         },
                         success: function(response) {
                             Swal.close();

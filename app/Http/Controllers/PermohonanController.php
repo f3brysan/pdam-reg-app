@@ -227,7 +227,8 @@ class PermohonanController extends Controller
     public function validasi(Request $request, $id)
     {
         try {
-            $id = Crypt::decryptString($id);
+                
+            $id = Crypt::decrypt($id);
             $harga = $request->harga;
             $harga = str_replace('.', '', $harga);
             $permohonan = PermohonanTransaction::where('id', $id)->first();
@@ -252,7 +253,17 @@ class PermohonanController extends Controller
                 'is_valid' => false,
             ]);
 
+            $checkNoPelanggan = PermohonanTransaction::where('no_pelanggan', $request->no_pelanggan)->first();
+            
+            if ($checkNoPelanggan) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No. pelanggan sudah digunakan',
+                ], 422);
+            }
+
             $updateStatus = PermohonanTransaction::where('id', $id)->update([
+                'no_pelanggan' => $request->no_pelanggan,
                 'status' => 'MENUNGGU PEMBAYARAN',
             ]);
 
@@ -423,12 +434,9 @@ class PermohonanController extends Controller
                 'nomor_seri' => $request->nomor_seri,
                 'is_done' => false,
                 'created_by' => auth()->id(),
-            ]);
+            ]);            
 
-            $NoPelanggan = 'JI-'.strtotime(now());
-
-            PermohonanTransaction::where('id', $id)->update([
-                'no_pelanggan' => $NoPelanggan,
+            PermohonanTransaction::where('id', $id)->update([                
                 'status' => 'TERJADWAL PEMASANGAN',
             ]);
 

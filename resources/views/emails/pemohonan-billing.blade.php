@@ -18,6 +18,10 @@
             <td style="padding: 8px 0; border-bottom: 1px solid #eee; text-align: right;"><strong>{{ $permohonan->no_register }}</strong></td>
         </tr>
         <tr>
+            <td style="padding: 8px 0; border-bottom: 1px solid #eee;">Nomor pelanggan</td>
+            <td style="padding: 8px 0; border-bottom: 1px solid #eee; text-align: right;"><strong>{{ $permohonan->no_pelanggan }}</strong></td>
+        </tr>
+        <tr>
             <td style="padding: 8px 0; border-bottom: 1px solid #eee;">Nomor VA</td>
             <td style="padding: 8px 0; border-bottom: 1px solid #eee; text-align: right;"><strong>{{ $billing->no_va }}</strong></td>
         </tr>
