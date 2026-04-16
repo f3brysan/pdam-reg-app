@@ -74,7 +74,7 @@
                             <div class="mb-3">
                                 <label for="nama" class="form-label">Nama Lengkap</label>
                                 <input type="text" class="form-control" id="nama" name="nama"
-                                    value="{{ auth()->user()->name }}" readonly>
+                                    value="{{ auth()->user()->name }}">
                             </div>
                             <div class="mb-3">
                                 <label for="nik" class="form-label">NIK</label>
