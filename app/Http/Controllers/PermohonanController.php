@@ -296,7 +296,7 @@ class PermohonanController extends Controller
             . "Nomor VA: 5808202604120001\n"
             . "Jumlah Tagihan: Rp. 250.000\n"
             . "Status Permohonan: MENUNGGU PEMBAYARAN\n\n"
-            . "Lakukan pembayaran melalui channel yang disediakan Perumdam Lawu Tirta Magetan menggunakan nomor VA di atas.";
+            . "Lakukan pembayaran melalui mitra yang disediakan Perumdam Lawu Tirta Magetan menggunakan nomor VA di atas.";
             
             $kirimWa = $this->kirimWa($no_wa, $message);            
 
