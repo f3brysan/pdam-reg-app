@@ -18,6 +18,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
@@ -99,7 +100,7 @@ class PermohonanController extends Controller
                 if ($fileValidator->fails()) {
                     return response()->json([
                         'success' => false,
-                        'message' => $fileValidator->errors()->first($slug, 'id'),                
+                        'message' => $fileValidator->errors()->first($slug, 'id'),
                         'error_type' => 'validation_error',
                         'field' => $slug,
                     ], 422);
@@ -227,7 +228,7 @@ class PermohonanController extends Controller
     public function validasi(Request $request, $id)
     {
         try {
-                
+
             $id = Crypt::decrypt($id);
             $harga = $request->harga;
             $harga = str_replace('.', '', $harga);
@@ -254,7 +255,7 @@ class PermohonanController extends Controller
             ]);
 
             $checkNoPelanggan = PermohonanTransaction::where('no_pelanggan', $request->no_pelanggan)->first();
-            
+
             if ($checkNoPelanggan) {
                 return response()->json([
                     'success' => false,
@@ -272,6 +273,33 @@ class PermohonanController extends Controller
             $permohonan->refresh();
 
             $pemohon = User::find($id);
+            
+            // Pastikan nomor WA diawali 62
+            $no_wa = $permohonan->telepon;            
+            
+            // Hilangkan whitespace dan strip
+            $no_wa = preg_replace('/[\s\-]/', '', $no_wa);
+            if (substr($no_wa, 0, 2) !== '62') {
+                // Jika angka pertama 0 ubah ke 62, jika tidak tambahkan 62 di depan
+                if (substr($no_wa, 0, 1) === '0') {
+                    $no_wa = '62' . substr($no_wa, 1);
+                } else {
+                    $no_wa = '62' . $no_wa;
+                }
+            }
+
+           $message = "Halo Saudara/i Lina Putri,\n\n"
+            . "Permohonan Anda telah divalidasi.\n"
+            . "Silakan melakukan pembayaran sesuai rincian berikut:\n\n"
+            . "Nomor Registrasi: 202604120001\n"
+            . "Nomor Pelanggan: AD-1231231\n"
+            . "Nomor VA: 5808202604120001\n"
+            . "Jumlah Tagihan: Rp. 250.000\n"
+            . "Status Permohonan: MENUNGGU PEMBAYARAN\n\n"
+            . "Lakukan pembayaran melalui channel yang disediakan Perumdam Lawu Tirta Magetan menggunakan nomor VA di atas.";
+            
+            $kirimWa = $this->kirimWa($no_wa, $message);            
+
             if ($pemohon && filter_var($pemohon->email, FILTER_VALIDATE_EMAIL)) {
                 try {
                     Mail::to($pemohon->email)->send(new PemohonanBillingMail($permohonan, $createBilling));
@@ -434,9 +462,9 @@ class PermohonanController extends Controller
                 'nomor_seri' => $request->nomor_seri,
                 'is_done' => false,
                 'created_by' => auth()->id(),
-            ]);            
+            ]);
 
-            PermohonanTransaction::where('id', $id)->update([                
+            PermohonanTransaction::where('id', $id)->update([
                 'status' => 'TERJADWAL PEMASANGAN',
             ]);
 
@@ -444,6 +472,30 @@ class PermohonanController extends Controller
 
             $checkPermohonan->refresh();
             $permohonanOfficer->load(['petugas', 'msMeteran']);
+
+            $no_wa = $checkPermohonan->telepon;
+            // Hilangkan whitespace dan strip
+            $no_wa = preg_replace('/[\s\-]/', '', $no_wa);
+            if (substr($no_wa, 0, 2) !== '62') {
+                // Jika angka pertama 0 ubah ke 62, jika tidak tambahkan 62 di depan
+                if (substr($no_wa, 0, 1) === '0') {
+                    $no_wa = '62' . substr($no_wa, 1);
+                } else {
+                    $no_wa = '62' . $no_wa;
+                }
+            }
+
+           $message = "Halo Saudara/i Lina Putri,\n\n"
+            . "Permohonan Anda telah dijadwalkan untuk pemasangan meter air.\n"
+            . "Silakan melakukan pembayaran sesuai rincian berikut:\n\n"
+            . "Nomor Registrasi: ".$checkPermohonan->no_register."\n"
+            . "Nomor Pelanggan: ".$checkPermohonan->no_pelanggan."\n"
+            . "Tanggal pemasangan: ".$permohonanOfficer->tgl_pasang."\n"
+            . "Petugas: ".$permohonanOfficer->petugas->name."\n"
+            . "Jenis meteran: ".$permohonanOfficer->msMeteran->nama."\n"
+            . "Nomor meteran: ".$permohonanOfficer->nomor_seri."\n";
+            
+            $kirimWa = $this->kirimWa($no_wa, $message);            
 
             $pelanggan = User::find($id);
             if ($pelanggan && filter_var($pelanggan->email, FILTER_VALIDATE_EMAIL)) {
@@ -598,5 +650,26 @@ class PermohonanController extends Controller
                 'message' => $th->getMessage(),
             ], 500);
         }
+    }
+
+    public function kirimWa($no_hp, $message)
+    {
+        $response = Http::withHeaders([
+            'Authorization' => config('services.fonnte.api_key'),
+        ])->post('https://api.fonnte.com/send', [
+                    'target' => $no_hp,
+                    'message' => $message,
+                ]);
+
+        if ($response->successful()) {
+            return [
+                'success' => true,
+                'message' => 'Pesan berhasil dikirim',
+                'target' => $no_hp,
+                'target_message' => $message,
+            ];
+        }
+
+        return 'Gagal kirim pesan';
     }
 }
