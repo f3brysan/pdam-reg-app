@@ -6,7 +6,7 @@
 <body>
     <table border="1" cellspacing="0" cellpadding="4">
         <tr>
-            <td colspan="11"><strong>Laporan Pemasangan</strong></td>
+            <td colspan="11"><strong>Daftar Data Sambungan Baru</strong></td>
         </tr>
         <tr>
             <td colspan="11">

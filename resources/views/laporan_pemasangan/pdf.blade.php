@@ -43,7 +43,7 @@
     </style>
 </head>
 <body>
-    <div class="title">Laporan Pemasangan</div>
+    <div class="title">Daftar Data Sambungan Baru</div>
 
     <div class="meta">
         <div><strong>Filter kecamatan</strong>: {{ $filter['kecamatan'] ?: 'Semua' }}</div>

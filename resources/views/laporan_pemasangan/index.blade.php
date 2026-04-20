@@ -72,7 +72,7 @@
             <div class="card">
                 <div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-2">
                     <div>
-                        <h5 class="card-title mb-0">Daftar pemasangan</h5>
+                        <h5 class="card-title mb-0">Daftar Data Sambungan Baru</h5>
                         <small class="text-muted">
                             Total: <strong>{{ number_format($permohonanTransactions->count(), 0, ',', '.') }}</strong> data
                         </small>
