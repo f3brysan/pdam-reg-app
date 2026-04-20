@@ -8,7 +8,7 @@
           <div data-i18n="Dashboard">Dashboard</div>
         </a>
       </li>      
-      @role('pimpinan')
+      @role('pimpinan|admin')
       <li class="menu-item {{ request()->is('laporan-pemasangan*') ? 'active' : '' }}">
         <a href="{{ route('laporan-pemasangan.index') }}" class="menu-link">
           <i class="menu-icon tf-icons mdi mdi-file-outline"></i>

@@ -34,7 +34,7 @@ route::group(['middleware' => 'auth'], function () {
     route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     // * Laporan Pemasangan (prefix)
-    route::group(['middleware' => ['role:pimpinan']], function () {
+    route::group(['middleware' => ['role:pimpinan|admin']], function () {
         route::prefix('laporan-pemasangan')->group(function () {
             route::get('/', [LaporanPemasanganController::class, 'index'])->name('laporan-pemasangan.index');
             route::get('/export/pdf', [LaporanPemasanganController::class, 'exportPdf'])->name('laporan-pemasangan.export.pdf');
