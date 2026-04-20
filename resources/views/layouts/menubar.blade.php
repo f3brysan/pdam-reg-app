@@ -8,6 +8,14 @@
           <div data-i18n="Dashboard">Dashboard</div>
         </a>
       </li>      
+      @role('pimpinan')
+      <li class="menu-item {{ request()->is('laporan-pemasangan*') ? 'active' : '' }}">
+        <a href="{{ route('laporan-pemasangan.index') }}" class="menu-link">
+          <i class="menu-icon tf-icons mdi mdi-file-outline"></i>
+          <div data-i18n="Laporan Pemasangan">Laporan Pemasangan</div>
+        </a>
+      </li>
+      @endrole
       @role('admin')
       <li class="menu-item {{ request()->is('permohonan*') ? 'active' : '' }}">
         <a href="{{ route('permohonan.index') }}" class="menu-link">
