@@ -486,12 +486,13 @@ class PermohonanController extends Controller
             }
 
            $message = "Halo Saudara/i $checkPermohonan->nama,\n\n"
-            . "Permohonan Anda telah dijadwalkan untuk pemasangan meter air.\n"
-            . "Silakan melakukan pembayaran sesuai rincian berikut:\n\n"
+            . "Permohonan Anda telah dijadwalkan untuk pemasangan sambungan baru meter air.\n"
+            . "Silakan menunggu petugas teknis datang untuk melakukan pemasangan.\n\n"
+            . "Berikut ringkasan informasinya:\n\n"
             . "Nomor Registrasi: ".$checkPermohonan->no_register."\n"
             . "Nomor Pelanggan: ".$checkPermohonan->no_pelanggan."\n"
             . "Tanggal pemasangan: ".$permohonanOfficer->tgl_pasang."\n"
-            . "Petugas: ".$permohonanOfficer->petugas->name."\n"
+            . "Petugas Teknis: ".$permohonanOfficer->petugas->name."\n"
             . "Jenis meteran: ".$permohonanOfficer->msMeteran->nama."\n"
             . "Nomor meteran: ".$permohonanOfficer->nomor_seri."\n";
             
