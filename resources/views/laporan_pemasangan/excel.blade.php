@@ -38,8 +38,8 @@
                         {{ \Carbon\Carbon::parse($row->tgl_daftar)->format('d-m-Y') }}
                     @endif
                 </td>
-                <td>{{ optional($row->msMeteran)->nama ?? '' }}</td>
-                <td>{{ $row->nomor_seri ?? '' }}</td>
+                <td>{{ !empty($row->permohonanOfficer) ? $row->permohonanOfficer->msMeteran->nama : '—' }}</td>
+                <td>{{ !empty($row->permohonanOfficer) ? $row->permohonanOfficer->nomor_seri : '—' }}</td>
                 <td>{{ $row->no_pelanggan ?? '' }}</td>
                 <td>{{ $row->nama ?? '' }}</td>
                 <td>{{ $row->alamat ?? '' }}</td>

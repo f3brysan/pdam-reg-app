@@ -21,11 +21,6 @@ class PermohonanTransaction extends Model
         return $this->belongsTo(MsJenisTempatTinggal::class, 'ms_jenis_tempat_tinggal_id', 'id');
     }
 
-    public function msMeteran()
-    {
-        return $this->belongsTo(MsMeteran::class, 'ms_meteran_id', 'id');
-    }
-
     public function permohonanDokumenTransactions()
     {
         return $this->hasMany(PermohonanDokumenTransaction::class, 'permohonan_transaction_id', 'id');

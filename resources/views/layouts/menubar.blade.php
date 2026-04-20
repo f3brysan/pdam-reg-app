@@ -7,15 +7,7 @@
           <i class="menu-icon tf-icons mdi mdi-home-outline"></i>
           <div data-i18n="Dashboard">Dashboard</div>
         </a>
-      </li>      
-      @role('pimpinan|admin')
-      <li class="menu-item {{ request()->is('laporan-pemasangan*') ? 'active' : '' }}">
-        <a href="{{ route('laporan-pemasangan.index') }}" class="menu-link">
-          <i class="menu-icon tf-icons mdi mdi-file-outline"></i>
-          <div data-i18n="Laporan Pemasangan">Laporan Pemasangan</div>
-        </a>
-      </li>
-      @endrole
+      </li>            
       @role('admin')
       <li class="menu-item {{ request()->is('permohonan*') ? 'active' : '' }}">
         <a href="{{ route('permohonan.index') }}" class="menu-link">
@@ -59,6 +51,14 @@
         <a href="{{ route('users.index') }}" class="menu-link">
           <i class="menu-icon tf-icons mdi mdi-account-outline"></i>
           <div data-i18n="User">User</div>
+        </a>
+      </li>
+      @endrole
+      @role('pimpinan|admin')
+      <li class="menu-item {{ request()->is('laporan-pemasangan*') ? 'active' : '' }}">
+        <a href="{{ route('laporan-pemasangan.index') }}" class="menu-link">
+          <i class="menu-icon tf-icons mdi mdi-file-outline"></i>
+          <div data-i18n="Laporan Pemasangan">Laporan Pemasangan</div>
         </a>
       </li>
       @endrole

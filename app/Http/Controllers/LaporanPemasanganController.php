@@ -21,13 +21,13 @@ class LaporanPemasanganController extends Controller
         $permohonanTransactions = $this->buildFilteredQuery($request)
             ->with(
                 'permohonanOfficer.petugas',
+                'permohonanOfficer.msMeteran',
                 'msPekerjaan',
                 'msJenisTempatTinggal',
-                'msMeteran',
                 'user',
                 'permohonanBiling'
             )
-            ->get();
+            ->get();            
 
         return view('laporan_pemasangan.index', [
             'permohonanTransactions' => $permohonanTransactions,
@@ -44,7 +44,7 @@ class LaporanPemasanganController extends Controller
         $data = $this->buildFilteredQuery($request)
             ->with(
                 'permohonanOfficer.petugas',
-                'msMeteran',
+                'permohonanOfficer.msMeteran',
                 'permohonanBiling'
             )
             ->orderBy('tgl_daftar', 'asc')
@@ -75,7 +75,7 @@ class LaporanPemasanganController extends Controller
         $to = $request->input('tgl_permohonan_to');
 
         $rows = $this->buildFilteredQuery($request)
-            ->with('permohonanOfficer.petugas')
+            ->with('permohonanOfficer.petugas', 'permohonanOfficer.msMeteran')
             ->orderBy('tgl_daftar', 'asc')
             ->get();
 
