@@ -288,13 +288,13 @@ class PermohonanController extends Controller
                 }
             }
 
-           $message = "Halo Saudara/i Lina Putri,\n\n"
+           $message = "Halo Saudara/i $permohonan->nama,\n\n"
             . "Permohonan Anda telah divalidasi.\n"
             . "Silakan melakukan pembayaran sesuai rincian berikut:\n\n"
-            . "Nomor Registrasi: 202604120001\n"
-            . "Nomor Pelanggan: AD-1231231\n"
-            . "Nomor VA: 5808202604120001\n"
-            . "Jumlah Tagihan: Rp. 250.000\n"
+            . "Nomor Registrasi: ".$permohonan->no_register."\n"
+            . "Nomor Pelanggan: ".$permohonan->no_pelanggan."\n"
+            . "Nomor VA: ".$createBilling->no_va."\n"
+            . "Jumlah Tagihan: Rp. ".$createBilling->price."\n"
             . "Status Permohonan: MENUNGGU PEMBAYARAN\n\n"
             . "Lakukan pembayaran melalui mitra yang disediakan Perumdam Lawu Tirta Magetan menggunakan nomor VA di atas.";
             
@@ -485,7 +485,7 @@ class PermohonanController extends Controller
                 }
             }
 
-           $message = "Halo Saudara/i Lina Putri,\n\n"
+           $message = "Halo Saudara/i $checkPermohonan->nama,\n\n"
             . "Permohonan Anda telah dijadwalkan untuk pemasangan meter air.\n"
             . "Silakan melakukan pembayaran sesuai rincian berikut:\n\n"
             . "Nomor Registrasi: ".$checkPermohonan->no_register."\n"
