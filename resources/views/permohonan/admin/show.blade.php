@@ -137,7 +137,7 @@
                     </div>
                     <div class="card-body">
                         @if (!empty($permohonanOfficer))
-                            <p>Petugas pemasangan: {{ optional($permohonanOfficer->petugas)->name }}
+                            <p>Petugas pemasangan: {{ $permohonanOfficer->petugas ? $permohonanOfficer->petugas->name : 'User tidak ditemukan' }}
                                 <br>Jenis meteran: {{ optional($permohonanOfficer->msMeteran)->nama }}
                                 <br>Nomor meter: {{ $permohonanOfficer->nomor_seri }}
                                 <br>Tanggal pasang:
