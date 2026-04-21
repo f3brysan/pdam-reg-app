@@ -90,13 +90,13 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @forelse ($daftarPemasangan as $item)
+                                @foreach ($daftarPemasangan as $item)
                                     <tr>
                                         <td class="text-end">{{ $loop->iteration }}</td>
                                         <td>{{ optional($item->permohonanTransaction)->no_register ?? '-' }}</td>
                                         <td>{{ optional($item->permohonanTransaction)->nama ?? '-' }}</td>
                                         <td class="text-center">{{ ! empty($item->tgl_pasang) ? \Carbon\Carbon::parse($item->tgl_pasang)->locale('id')->translatedFormat('d F Y') : '-' }}</td>
-                                        <td>Meteran: {{ optional($item->msMeteran)->nama ?? '-' }} <br>  Nomor Seri: {{ $item->nomor_seri ?? '-' }}</td>
+                                        <td>Meteran: {{ optional($item->msMeteran)->nama ?? '-' }} <br> Nomor Seri: {{ $item->nomor_seri ?? '-' }}</td>
                                         <td class="text-center">
                                             @if ($item->is_done)
                                                 <span class="badge bg-success">Selesai</span>
@@ -110,11 +110,7 @@
                                             </a>
                                         </td>
                                     </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="7" class="text-center text-muted">Belum ada data pemasangan.</td>
-                                    </tr>
-                                @endforelse
+                                @endforeach
                             </tbody>
                         </table>
                     </div>
@@ -130,7 +126,10 @@
         $(document).ready(function () {
             $('#table-teknisi').DataTable({
                 pageLength: 10,
-                order: []
+                order: [],
+                language: {
+                    emptyTable: 'Belum ada data pemasangan.'
+                }
             });
         });
     </script>
