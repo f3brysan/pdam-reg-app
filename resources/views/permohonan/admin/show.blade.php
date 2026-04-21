@@ -498,6 +498,10 @@
         $('#form-set-petugas-pemasangan').submit(function(e) {
             e.preventDefault();
 
+            // Disable the submit button to prevent double submission
+            $(this).find('button[type="submit"]').prop('disabled', true);
+            $(this).find('button[type="submit"]').text('Menyimpan...');
+    
             $.ajax({
                 url: "{{ route('permohonan.set-petugas-pemasangan', Crypt::encryptString($permohonan->id)) }}",
                 type: 'POST',
@@ -508,6 +512,7 @@
                     tgl_pasang: $('#tgl-pasang').val(),
                     nomor_seri: $('#nomor-seri').val(),
                 },
+                dataType: 'json',
                 success: function(response) {
                     $('#modalSetPetugasPemasangan').modal('hide');
                     Swal.fire({
@@ -517,6 +522,8 @@
                     }).then(function() {
                         location.reload();
                     });
+                    $(this).find('button[type="submit"]').prop('disabled', false);
+                    $(this).find('button[type="submit"]').text('Simpan');
                 },
                 error: function(xhr) {
                     let message = 'Terjadi kesalahan saat menyimpan data';
@@ -524,6 +531,7 @@
                         message = xhr.responseJSON.message;
                     }
                     toastr.error(message);
+                    $(this).find('button[type="submit"]').prop('disabled', false);
                 }
             });
         });
