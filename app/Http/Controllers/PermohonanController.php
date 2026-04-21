@@ -100,7 +100,7 @@ class PermohonanController extends Controller
                 if ($fileValidator->fails()) {
                     return response()->json([
                         'success' => false,
-                        'message' => $fileValidator->errors()->first($slug, 'id'),
+                        'message' => $fileValidator->errors()->first($slug),
                         'error_type' => 'validation_error',
                         'field' => $slug,
                     ], 422);
