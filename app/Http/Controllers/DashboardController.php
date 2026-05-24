@@ -50,12 +50,12 @@ class DashboardController extends Controller
     public function userIndex()
     {
         $permohonanTransactions = PermohonanTransaction::with('permohonanBiling', 'permohonanOfficer')
-        ->where('id', Auth::user()->id)->orderBy('created_at', 'desc')->first();
+        ->where('id', Auth::user()->id)->orderBy('created_at', 'desc')->first();             
 
-        $checkRejected = $permohonanTransactions->where('status', 'DITOLAK')->first();        
-
+        $checkRejected = null;
         $dokumenPendukung = [];
         if ($permohonanTransactions) {
+            $checkRejected = PermohonanTransaction::where('id', Auth::user()->id)->where('status', 'DITOLAK')->first();   
             $dokumenPendukung = DB::table('ms_jenis_dokumens')
                 ->leftJoin('permohonan_dokumen_transactions', 'ms_jenis_dokumens.id', '=', 'permohonan_dokumen_transactions.ms_jenis_dokumen_id')
                 ->where('permohonan_dokumen_transactions.permohonan_transaction_id', $permohonanTransactions->id)
