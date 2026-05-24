@@ -183,9 +183,18 @@
                         <h5 class="card-title mb-0">Laporan hasil pemasangan</h5>
                     </div>
                     <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-12">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
                                 <p>Jumlah dokumen terlampir: {{ $officerDocuments->count() }}</p>
+                            </div>
+                            <div class="col-md-6 text-end">
+                                @if ($permohonan->status !== 'SELESAI')
+                                    <button class="btn btn-sm btn-primary" id="btn-konfirmasi-pemasangan">
+                                        <i class="fa fa-check"></i> Konfirmasi Hasil Pemasangan
+                                    </button>
+                                @else
+                                    <span class="badge bg-success">Sudah dikonfirmasi</span>
+                                @endif
                             </div>
                         </div>
                         <div class="row">
@@ -637,6 +646,63 @@
                     toastr.error(message);
                     $(this).find('button[type="submit"]').prop('disabled', false);
                 }
+            });
+        });
+
+        $('#btn-konfirmasi-pemasangan').click(function() {
+            Swal.fire({
+                title: 'Konfirmasi Hasil Pemasangan',
+                text: 'Apakah Anda yakin ingin konfirmasi hasil pemasangan ini?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Ya',
+                cancelButtonText: 'Tidak',
+                customClass: {
+                    confirmButton: 'btn btn-success',
+                    cancelButton: 'btn btn-secondary',
+                }
+            }).then(function(result) {
+                if (!result.isConfirmed) {
+                    return;
+                }
+
+                Swal.fire({
+                    title: 'Memuat',
+                    text: 'Memproses konfirmasi hasil pemasangan...',
+                    icon: 'info',
+                    showConfirmButton: false,
+                    allowOutsideClick: false,
+                });
+
+                $.ajax({
+                    url: "{{ route('permohonan.konfirmasi-hasil-pemasangan') }}",
+                    type: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        permohonan_transaction_id: "{{ Crypt::encrypt($permohonan->id) }}",
+                    },
+                    dataType: 'json',
+                    success: function(response) {
+                        Swal.fire({
+                            title: 'Berhasil',
+                            text: response.message,
+                            icon: 'success',
+                        }).then(function() {
+                            location.reload();
+                        });
+                    },
+                    error: function(xhr) {
+                        let message = 'Terjadi kesalahan saat konfirmasi hasil pemasangan';
+                        if (xhr.responseJSON && xhr.responseJSON.message) {
+                            message = xhr.responseJSON.message;
+                        }
+                        Swal.fire({
+                            title: 'Gagal',
+                            text: message,
+                            icon: 'error',
+                        });
+                    },
+                });
             });
         });
     </script>

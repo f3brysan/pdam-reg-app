@@ -225,8 +225,8 @@ class PermohonanController extends Controller
         $permohonanDokumen = PermohonanDokumenTransaction::with(['msJenisDokumen'])
             ->where('permohonan_transaction_id', $id)
             ->get();
-
-        $officerDocuments = OfficerDocument::where('permohonan_transaction_id', $id)->where('petugas_id', auth()->user()->id)->get();
+        
+        $officerDocuments = OfficerDocument::where('permohonan_transaction_id', $id)->where('petugas_id', $permohonanOfficer->petugas_id)->get();
 
         if (Auth::user()->roles->first()->name == 'teknisi') {
             return view('permohonan.teknisi.show', compact('permohonan', 'permohonanDokumen', 'permohonanBiling', 'permohonanOfficer', 'officers', 'msMeteran', 'officerDocuments'));
