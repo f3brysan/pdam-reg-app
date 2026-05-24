@@ -9,7 +9,7 @@
             <div class="card mb-3">
                 <div class="d-flex align-items-end row">
                     <div class="col-md-12 order-2 order-md-1">
-                        @if ($permohonanTransactions)
+                        @if ($permohonanTransactions && $checkRejected == null)
                             <div class="card-body">
                                 <h4 class="card-title pb-xl-2">Selamat datang <strong>{{ Auth::user()->name }}</strong> 👋
                                 </h4>
@@ -158,6 +158,21 @@
                                 </div>
                             </div>
                         @else
+                            @if (isset($permohonanTransactions) && !empty($permohonanTransactions->catatan))
+                                <div class="card-body">
+                                    <h6 class="fw-semibold my-3">Informasi Permohonan</h6>
+                                    <div class="alert alert-danger" role="alert">
+                                        <i class="mdi mdi-alert-circle-outline me-2"></i>
+                                        Mohon maaf, permohonan Anda telah ditolak.
+                                        <br>
+                                        <strong>Alasan ditolak:</strong>
+                                        <p class="mb-0">                                            
+                                            {{ $permohonanTransactions->catatan }}
+                                        </p>
+                                    </div>
+                                </div>
+                            @endif
+                       
                             <div class="card-body">
                                 <h4 class="card-title pb-xl-2">Selamat datang <strong>{{ Auth::user()->name }}</strong> 👋
                                 </h4>

@@ -57,8 +57,16 @@
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label fw-semibold">Status</label>
-                                <p class="mb-0"><span class="badge bg-info">{{ $permohonan->status }}</span></p>
+                                <p class="mb-0">
+                                    <span class="badge {{ $permohonan->status === 'DITOLAK' ? 'bg-danger' : 'bg-info' }}">{{ $permohonan->status }}</span>
+                                </p>
                             </div>
+                            @if ($permohonan->status === 'DITOLAK' && $permohonan->catatan)
+                                <div class="col-md-12 mb-3">
+                                    <label class="form-label fw-semibold">Catatan penolakan</label>
+                                    <p class="mb-0">{{ $permohonan->catatan }}</p>
+                                </div>
+                            @endif
                             <div class="col-md-6 mb-3">
                                 <label class="form-label fw-semibold">Pekerjaan</label>
                                 <p class="mb-0">{{ optional($permohonan->msPekerjaan)->nama }}</p>
@@ -85,11 +93,14 @@
                             </div>
 
                         </div>
-                        @if (empty($permohonanBiling))
+                        @if (empty($permohonanBiling) && $permohonan->status !== 'DITOLAK')
                             <div class="row">
                                 <div class="col-12 d-flex justify-content-end">
                                     <button class="btn btn-sm btn-success" id="btn-validasi-permohonan">
                                         <i class="fa fa-check"></i> Validasi Permohonan
+                                    </button>
+                                    <button class="btn btn-sm btn-danger ms-2" id="btn-tolak-permohonan">
+                                        <i class="fa fa-times"></i> Tolak Permohonan
                                     </button>
                                 </div>
                             </div>
@@ -137,7 +148,8 @@
                     </div>
                     <div class="card-body">
                         @if (!empty($permohonanOfficer))
-                            <p>Petugas pemasangan: {{ $permohonanOfficer->petugas ? $permohonanOfficer->petugas->name : 'User tidak ditemukan' }}
+                            <p>Petugas pemasangan:
+                                {{ $permohonanOfficer->petugas ? $permohonanOfficer->petugas->name : 'User tidak ditemukan' }}
                                 <br>Jenis meteran: {{ optional($permohonanOfficer->msMeteran)->nama }}
                                 <br>Nomor meter: {{ $permohonanOfficer->nomor_seri }}
                                 <br>Tanggal pasang:
@@ -177,14 +189,14 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-12">                               
+                            <div class="col-md-12">
                                 <div class="row">
                                     <div class="col-md-12">
                                         <table class="table table-bordered">
                                             <thead>
                                                 <tr>
                                                     <th>No.</th>
-                                                    <th>Dokumen</th>                                                    
+                                                    <th>Dokumen</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -199,7 +211,7 @@
                                                                     style="max-width: 80px; max-height: 80px;"
                                                                     class="img-thumbnail">
                                                             </a>
-                                                        </td>                                                       
+                                                        </td>
                                                     </tr>
                                                 @endforeach
                                             </tbody>
@@ -276,7 +288,7 @@
                             <input type="text" class="form-control" id="input-no-pelanggan" name="no_pelanggan"
                                 placeholder="Masukkan no pelanggan" required>
                         </div>
-                   
+
                         <div class="mb-3">
                             <label for="input-harga" class="form-label">Nominal tagihan (Rp)</label>
                             <input type="text" class="form-control" id="input-harga" name="harga"
@@ -286,6 +298,32 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
                         <button type="submit" class="btn btn-primary">Simpan nominal</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalTolakPermohonan" tabindex="-1" aria-labelledby="modalTolakPermohonanLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <form id="form-tolak-permohonan">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalTolakPermohonanLabel">Tolak Permohonan</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p class="text-muted">Berikan alasan penolakan permohonan ini.</p>
+                        <div class="mb-3">
+                            <label for="input-catatan-tolak" class="form-label">Catatan</label>
+                            <textarea class="form-control" id="input-catatan-tolak" name="catatan" rows="4"
+                                placeholder="Masukkan catatan penolakan" required></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-danger">Tolak Permohonan</button>
                     </div>
                 </div>
             </form>
@@ -387,6 +425,72 @@
 
         $('#btn-validasi-permohonan').click(function() {
             $('#modalInputHarga').modal('show');
+        });
+
+        $('#btn-tolak-permohonan').click(function() {
+            $('#input-catatan-tolak').val('');
+            $('#modalTolakPermohonan').modal('show');
+        });
+
+        $('#form-tolak-permohonan').submit(function(e) {
+            e.preventDefault();
+
+            const catatan = $('#input-catatan-tolak').val().trim();
+            if (!catatan) {
+                toastr.error('Catatan penolakan wajib diisi');
+                return;
+            }
+
+            $('#modalTolakPermohonan').modal('hide');
+
+            Swal.fire({
+                title: 'Tolak Permohonan',
+                text: 'Apakah Anda yakin ingin menolak permohonan ini?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Ya, tolak',
+                cancelButtonText: 'Batal',
+                confirmButtonColor: '#d33',
+            }).then(function(result) {
+                if (!result.isConfirmed) {
+                    $('#modalTolakPermohonan').modal('show');
+                    return;
+                }
+
+                Swal.fire({
+                    title: 'Memuat',
+                    text: 'Memproses penolakan permohonan...',
+                    icon: 'info',
+                    showConfirmButton: false,
+                    allowOutsideClick: false,
+                });
+
+                $.ajax({
+                    url: '{{ route('permohonan.tolak', Crypt::encrypt($permohonan->id)) }}',
+                    type: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        catatan: catatan,
+                    },
+                    success: function() {
+                        Swal.close();
+                        toastr.success('Permohonan berhasil ditolak');
+                        location.reload();
+                    },
+                    error: function(xhr) {
+                        Swal.close();
+                        let message = 'Terjadi kesalahan saat menolak permohonan';
+                        if (xhr.responseJSON && xhr.responseJSON.message) {
+                            message = xhr.responseJSON.message;
+                        }
+                        if (xhr.responseJSON && xhr.responseJSON.errors && xhr.responseJSON.errors.catatan) {
+                            message = xhr.responseJSON.errors.catatan[0];
+                        }
+                        toastr.error(message);
+                        $('#modalTolakPermohonan').modal('show');
+                    },
+                });
+            });
         });
 
         $('#form-input-harga').submit(function(e) {
@@ -501,7 +605,7 @@
             // Disable the submit button to prevent double submission
             $(this).find('button[type="submit"]').prop('disabled', true);
             $(this).find('button[type="submit"]').text('Menyimpan...');
-    
+
             $.ajax({
                 url: "{{ route('permohonan.set-petugas-pemasangan', Crypt::encryptString($permohonan->id)) }}",
                 type: 'POST',

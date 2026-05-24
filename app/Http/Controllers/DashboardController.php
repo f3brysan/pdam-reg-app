@@ -49,7 +49,10 @@ class DashboardController extends Controller
 
     public function userIndex()
     {
-        $permohonanTransactions = PermohonanTransaction::with('permohonanBiling', 'permohonanOfficer')->where('id', Auth::user()->id)->first();
+        $permohonanTransactions = PermohonanTransaction::with('permohonanBiling', 'permohonanOfficer')
+        ->where('id', Auth::user()->id)->orderBy('created_at', 'desc')->first();
+
+        $checkRejected = $permohonanTransactions->where('status', 'DITOLAK')->first();        
 
         $dokumenPendukung = [];
         if ($permohonanTransactions) {
@@ -59,7 +62,7 @@ class DashboardController extends Controller
                 ->get();
         }
 
-        return view('dashboard.user.index', compact('permohonanTransactions', 'dokumenPendukung'));
+        return view('dashboard.user.index', compact('permohonanTransactions', 'dokumenPendukung', 'checkRejected'));
     }
 
     public function teknisiIndex()

@@ -140,6 +140,16 @@ class PermohonanController extends Controller
             }
 
             DB::beginTransaction();
+            $checkExisting = PermohonanTransaction::where('id', auth()->user()->id)->where('status', 'DITOLAK')->first();    
+            
+            if ($checkExisting) {
+                $deleteExisting = PermohonanDokumenTransaction::where('permohonan_transaction_id', auth()->user()->id)->delete();
+                $deleteExisting = PermohonanBiling::where('id', auth()->user()->id)->delete();
+                $deleteExisting = PermohonanOfficer::where('id', auth()->user()->id)->delete();
+                $deleteExisting = OfficerDocument::where('permohonan_transaction_id', auth()->user()->id)->delete();
+                $deleteExisting = PermohonanTransaction::where('id', auth()->user()->id)->where('status', 'DITOLAK')->delete();
+                $deleteExisting = PermohonanTransaction::where('id', auth()->user()->id)->where('status', 'DITOLAK')->delete();
+            }
 
             $userId = auth()->user()->id;
             $insertData = [
@@ -319,6 +329,55 @@ class PermohonanController extends Controller
         } catch (\Throwable $th) {
             DB::rollBack();
 
+            return response()->json([
+                'success' => false,
+                'message' => $th->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function tolakPermohonan(Request $request, $id)
+    {
+        $request->validate([
+            'catatan' => 'required|string|max:1000',
+        ]);
+
+        try {
+            $id = Crypt::decrypt($id);
+
+            $permohonan = PermohonanTransaction::where('id', $id)->first();
+
+            if (! $permohonan) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Permohonan tidak ditemukan',
+                ], 404);
+            }
+
+            if (PermohonanBiling::where('id', $id)->exists()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Permohonan tidak dapat ditolak karena sudah divalidasi',
+                ], 422);
+            }
+
+            if ($permohonan->status === 'DITOLAK') {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Permohonan sudah ditolak sebelumnya',
+                ], 422);
+            }
+
+            PermohonanTransaction::where('id', $id)->update([
+                'status' => 'DITOLAK',
+                'catatan' => $request->catatan,
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Permohonan berhasil ditolak',
+            ], 200);
+        } catch (\Throwable $th) {
             return response()->json([
                 'success' => false,
                 'message' => $th->getMessage(),
