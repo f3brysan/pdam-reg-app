@@ -30,6 +30,7 @@ return new class extends Migration
             $table->decimal('sedia_bayar', 1, 0)->nullable();
             $table->string('no_pelanggan')->nullable();
             $table->string('status', 50)->nullable();
+            $table->text('catatan')->nullable();       
             $table->timestamps(6);
         });
     }
