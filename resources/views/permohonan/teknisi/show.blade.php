@@ -314,6 +314,7 @@
                     'X-CSRF-TOKEN': '{{ csrf_token() }}',
                 },
                 success: function(response) {
+                    $('#uploadImageModal').modal('hide');
                     swal.fire({
                         title: 'Dokumen berhasil diunggah',
                         text: 'Dokumen yang diunggah tidak dapat dikembalikan.',
