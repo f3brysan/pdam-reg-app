@@ -218,15 +218,18 @@ class PermohonanController extends Controller
 
         $permohonanOfficer = PermohonanOfficer::with('petugas')->where('id', $id)->first();
 
+        $officerDocuments = null;
+        if ($permohonanOfficer) {
+            $officerDocuments = OfficerDocument::where('permohonan_transaction_id', $id)->where('petugas_id', $permohonanOfficer->petugas_id)->get();
+        }
+
         $officers = User::role('teknisi')->select('id', 'name')->get();
 
         $msMeteran = MsMeteran::select('id', 'nama')->get();
 
         $permohonanDokumen = PermohonanDokumenTransaction::with(['msJenisDokumen'])
             ->where('permohonan_transaction_id', $id)
-            ->get();
-        
-        $officerDocuments = OfficerDocument::where('permohonan_transaction_id', $id)->where('petugas_id', $permohonanOfficer->petugas_id)->get();
+            ->get();               
 
         if (Auth::user()->roles->first()->name == 'teknisi') {
             return view('permohonan.teknisi.show', compact('permohonan', 'permohonanDokumen', 'permohonanBiling', 'permohonanOfficer', 'officers', 'msMeteran', 'officerDocuments'));
