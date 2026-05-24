@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Mail\PemohonanBillingMail;
+use App\Mail\PemohonanDitolakMail;
 use App\Mail\PemohonanPemasanganMail;
 use App\Models\MsJenisDokumen;
 use App\Models\MsJenisTempatTinggal;
@@ -375,6 +376,39 @@ class PermohonanController extends Controller
                 'status' => 'DITOLAK',
                 'catatan' => $request->catatan,
             ]);
+
+            $permohonan->refresh();
+
+            $pemohon = User::find($id);
+
+            $no_wa = $permohonan->telepon;
+            $no_wa = preg_replace('/[\s\-]/', '', $no_wa);
+            if (substr($no_wa, 0, 2) !== '62') {
+                if (substr($no_wa, 0, 1) === '0') {
+                    $no_wa = '62'.substr($no_wa, 1);
+                } else {
+                    $no_wa = '62'.$no_wa;
+                }
+            }
+
+            $message = "Halo Saudara/i $permohonan->nama,\n\n"
+                ."Mohon maaf, permohonan Anda ditolak.\n\n"
+                ."Nomor Registrasi: ".$permohonan->no_register."\n"
+                ."Status Permohonan: DITOLAK\n"
+                ."Catatan: ".$permohonan->catatan."\n\n"
+                ."Silakan hubungi Perumdam Lawu Tirta Magetan jika memerlukan informasi lebih lanjut.";
+
+            $this->kirimWa($no_wa, $message);
+
+            if ($pemohon && filter_var($pemohon->email, FILTER_VALIDATE_EMAIL)) {
+                try {
+                    Mail::to($pemohon->email)->send(new PemohonanDitolakMail($permohonan));
+                } catch (\Throwable $mailError) {
+                    Log::warning('Gagal mengirim email penolakan ke pemohon: '.$mailError->getMessage(), [
+                        'permohonan_id' => $id,
+                    ]);
+                }
+            }
 
             return response()->json([
                 'success' => true,
